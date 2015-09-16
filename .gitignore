@@ -1,0 +1,8 @@
+#files
+temp/
+
+.idea/
+
+__pycache__/
+
+app.conf
