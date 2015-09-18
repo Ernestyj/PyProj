@@ -1,4 +1,3 @@
-__author__ = 'Jian'
 
 # Single line comments start with a number symbol.
 
