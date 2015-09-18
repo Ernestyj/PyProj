@@ -1,8 +1,8 @@
-#files
+#directory
+temp/
+.idea/
+__pycache__/
 temp/
 
-.idea/
-
-__pycache__/
-
+#files
 app.conf
