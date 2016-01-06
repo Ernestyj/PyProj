@@ -41,8 +41,8 @@ def printSchedule(r):
               (name, origin, out[0], out[1], out[2], ret[0], ret[1], ret[2])
 
 print('测试：将数字序列的题解s转换为航班表格')
-solutions = [1,4,3,2,7,3,6,3,2,4,5,3]
-printSchedule(solutions)
+solution = [1,4,3,2,7,3,6,3,2,4,5,3]
+# printSchedule(solution)
 print('****************************************************************************************')
 
 
@@ -80,19 +80,18 @@ def scheduleCost(sol):
     return totalprice + totalwait
 
 print('测试：按题解s计算旅行成本')
-solutions = [1,4,3,2,7,3,6,3,2,4,5,3]
-print(scheduleCost(solutions))
+print(scheduleCost(solution))
 print('****************************************************************************************')
 
 
-# Description: 随机搜索函数（默认1000次猜测）
+# Description: 随机搜索优化函数（默认1000次猜测）
 # Input: domain是由二元组构成的列表，指定题解中每个变量的最小最大值；题解长度与此列表长度相同
 #       costFunction是成本函数
 def randomOptimize(domain, costFunction):
     best=999999999
     bestr=None
     for i in range(1000):
-        # 创建一个随机解
+        # 创建随机解
         r=[ random.randint(domain[i][0], domain[i][1]) for i in range(len(domain)) ]
         # 得到成本
         cost=costFunction(r)
@@ -105,10 +104,127 @@ def randomOptimize(domain, costFunction):
 
 print('随机搜索旅行安排问题的最优题解，默认1000次猜测')
 domain=[(0, 9)] * (len(people)*2)
-solutions=randomOptimize(domain, scheduleCost)
-printSchedule(solutions)
+solution=randomOptimize(domain, scheduleCost)
+printSchedule(solution)
 print('****************************************************************************************')
 
 
+# Description: 爬山法搜索优化函数
+def hillClimb(domain, costFunction):
+    # 创建一个随机解
+    sol=[ random.randint(domain[i][0], domain[i][1]) for i in range(len(domain)) ]
+    # 主循环
+    while 1:
+        # 创建相邻解的列表
+        neighbors=[]
+        for j in range(len(domain)):
+            # 在每个方向上相对于原值偏离一点
+            if sol[j]>domain[j][0]:
+                neighbors.append(sol[0:j] + [sol[j]-1] + sol[j+1:])
+            if sol[j]<domain[j][1]:
+                neighbors.append(sol[0:j] + [sol[j]+1] + sol[j+1:])
+        # 在相邻解中寻找最优解
+        current=costFunction(sol)
+        best=current
+        for j in range(len(neighbors)):
+            cost=costFunction(neighbors[j])
+            if cost<best:
+                best=cost
+                sol=neighbors[j]
+        # 如果没有更好的解，则退出循环
+        if best==current: break
+    print 'best cost: %d' % best
+    return sol
+
+print('爬山法搜索旅行安排问题的最优题解')
+solution=hillClimb(domain, scheduleCost)
+printSchedule(solution)
+print('****************************************************************************************')
+
+
+# Description: 模拟退火算法，默认T=10000.0, cool=0.95, step=1
+#       其中接受更高成本题解的概率p=pow(math.e, -(costB-cost)/T),p随着降火从接近1下降到接近0
+def annealingOptimize(domain, costFunction, T=10000.0, cool=0.95, step=1):
+    # 随机初始化值
+    vec=[ random.randint(domain[i][0], domain[i][1]) for i in range(len(domain)) ]
+    while T>0.1:
+        # 随机选择一个索引
+        i=random.randint(0, len(domain)-1)
+        # 随机选择一个改变索引值的方向
+        direction=random.randint(-step, step)
+        # 创建一个代表题解的新列表（深度复制），并改变其中一个值
+        vecB=vec[:]
+        vecB[i]+=direction
+        if vecB[i]<domain[i][0]: vecB[i]=domain[i][0]
+        elif vecB[i]>domain[i][1]: vecB[i]=domain[i][1]
+        # 计算当前成本和新的成本
+        cost=costFunction(vec)
+        costB=costFunction(vecB)
+        best=cost
+        # 是更好的解吗？或者是趋向最优解的可能临界解吗？
+        if (costB<cost or random.random()<pow(math.e, -(costB-cost)/T)):
+            vec=vecB
+            best=costB
+        # 降低温度
+        T=T*cool
+    print 'best cost: %d' % best
+    return vec
+
+print('模拟退火算法搜索旅行安排问题的最优题解，T=10000.0, cool=0.95, step=1')
+solution=annealingOptimize(domain, scheduleCost)
+printSchedule(solution)
+print('****************************************************************************************')
+
+
+# Description: 遗传算法，默认popsize=50, step=1, mutprob=0.2, elite=0.2, maxiter=100
+def geneticOptimize(domain, costFunction, popsize=50, step=1,
+                    mutprob=0.2, elite=0.2, maxiter=100):
+    # 变异操作
+    def mutate(vec):
+        i=random.randint(0, len(domain)-1)
+        if random.random()<0.5 and vec[i]>domain[i][0]:
+            return vec[0:i] + [vec[i]-step] + vec[i+1:]
+        elif vec[i]<domain[i][1]:
+            return vec[0:i] + [vec[i]+step] + vec[i+1:]
+
+    # 交叉操作
+    def crossover(r1, r2):
+        i=random.randint(1, len(domain)-2)
+        return r1[0:i] + r2[i:]
+
+    # 构造初始种群
+    pop=[]
+    for i in range(popsize):
+        vec=[ random.randint(domain[i][0], domain[i][1]) for i in range(len(domain)) ]
+        pop.append(vec)
+    # 每一代中有多少胜出者
+    topElite=int(elite*popsize)
+    # 主循环
+    for i in range(maxiter):
+        scores=[ (costFunction(v), v) for v in pop if v!=None ]
+        scores.sort()
+        ranked=[ v for (s, v) in scores ]
+        # 从纯粹的胜出者开始
+        pop=ranked[0:topElite]
+        # 添加变异和配对后的胜出者
+        while len(pop)<popsize:
+            if random.random()<mutprob:
+                # 变异
+                c=random.randint(0, topElite)
+                pop.append(mutate(ranked[c]))
+            else:
+                # 交叉
+                c1=random.randint(0, topElite)
+                c2=random.randint(0, topElite)
+                pop.append(crossover(ranked[c1], ranked[c2]))
+        # 打印当前最优值
+        # print scores[0][0]
+    print scores[0][0]
+    return scores[0][1]
+
+print('遗传算法搜索旅行安排问题的最优题解，popsize=50, step=1, mutprob=0.2, elite=0.2, maxiter=100')
+solution=geneticOptimize(domain, scheduleCost)
+printSchedule(solution)
+print('****************************************************************************************')
 
 
