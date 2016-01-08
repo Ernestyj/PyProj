@@ -1,89 +1,96 @@
-from pysqlite2 import dbapi2 as sqlite
-import re
-import math
+# -*- coding: utf-8 -*-
+__author__ = 'DCLab'
 
+import re, math
 
+# Description: 从文本中提取不重复的单词
 def getwords(doc):
     splitter = re.compile('\\W*')
     print doc
     # Split the words by non-alpha characters
     words = [s.lower() for s in splitter.split(doc)
              if len(s) > 2 and len(s) < 20]
-
     # Return the unique set of words only
     return dict([(w, 1) for w in words])
 
+# Description: 预先对数据进行训练
+def sampletrain(cl):
+    cl.train('Nobody owns the water.', 'good')
+    cl.train('the quick rabbit jumps fences', 'good')
+    cl.train('buy pharmaceuticals now', 'bad')
+    cl.train('make quick money at the online casino', 'bad')
+    cl.train('the quick brown fox jumps', 'good')
 
+# Description: 分类器类
 class classifier:
-    def __init__(self, getfeatures, filename=None):
+    def __init__(self, getfeatures, fileName=None):
         # Counts of feature/category combinations
         self.fc = {}
         # Counts of documents in each category
         self.cc = {}
         self.getfeatures = getfeatures
 
-    def setdb(self, dbfile):
-        self.con = sqlite.connect(dbfile)
-        self.con.execute('create table if not exists fc(feature,category,count)')
-        self.con.execute('create table if not exists cc(category,count)')
+    # def setdb(self, dbfile):
+    #     self.con = sqlite.connect(dbfile)
+    #     self.con.execute('create table if not exists fc(feature,category,count)')
+    #     self.con.execute('create table if not exists cc(category,count)')
 
+    # 增加对特征/分类组合的计数值
     def incf(self, f, cat):
         count = self.fcount(f, cat)
         if count == 0:
-            self.con.execute("insert into fc values ('%s','%s',1)"
-                             % (f, cat))
+            self.con.execute("insert into fc values ('%s','%s',1)" % (f, cat))
         else:
             self.con.execute(
-                "update fc set count=%d where feature='%s' and category='%s'"
-                % (count + 1, f, cat))
+                "update fc set count=%d where feature='%s' and category='%s'" % (count + 1, f, cat))
 
+    # 某一特征出现于某一分类中的次数
     def fcount(self, f, cat):
         res = self.con.execute(
-            'select count from fc where feature="%s" and category="%s"'
-            % (f, cat)).fetchone()
+            'select count from fc where feature="%s" and category="%s"' % (f, cat)).fetchone()
         if res == None:
             return 0
         else:
             return float(res[0])
 
+    # 增加对某一分类的计数值
     def incc(self, cat):
         count = self.catcount(cat)
         if count == 0:
             self.con.execute("insert into cc values ('%s',1)" % (cat))
         else:
-            self.con.execute("update cc set count=%d where category='%s'"
-                             % (count + 1, cat))
+            self.con.execute("update cc set count=%d where category='%s'" % (count + 1, cat))
 
+    # 属于某一分类的内容项数量
     def catcount(self, cat):
-        res = self.con.execute('select count from cc where category="%s"'
-                               % (cat)).fetchone()
-        if res == None:
-            return 0
-        else:
-            return float(res[0])
+        res = self.con.execute('select count from cc where category="%s"' % (cat)).fetchone()
+        if res == None: return 0
+        else: return float(res[0])
 
+    # 所有分类的列表
     def categories(self):
         cur = self.con.execute('select category from cc');
         return [d[0] for d in cur]
 
+    # 所有内容项的数量
     def totalcount(self):
         res = self.con.execute('select sum(count) from cc').fetchone();
         if res == None: return 0
         return res[0]
 
+    # 对特征进行训练
     def train(self, item, cat):
         features = self.getfeatures(item)
         # Increment the count for every feature with this category
         for f in features:
             self.incf(f, cat)
-
         # Increment the count for this category
         self.incc(cat)
         self.con.commit()
 
+    # 计算特征在分类中出现的条件概率,P(word|classification)
     def fprob(self, f, cat):
         if self.catcount(cat) == 0: return 0
-
         # The total number of times this feature appeared in this
         # category divided by the total number of items in this category
         return self.fcount(f, cat) / self.catcount(cat)
@@ -91,29 +98,29 @@ class classifier:
     def weightedprob(self, f, cat, prf, weight=1.0, ap=0.5):
         # Calculate current probability
         basicprob = prf(f, cat)
-
-        # Count the number of times this feature has appeared in
-        # all categories
+        # Count the number of times this feature has appeared in all categories
         totals = sum([self.fcount(f, c) for c in self.categories()])
-
         # Calculate the weighted average
         bp = ((weight * ap) + (totals * basicprob)) / (weight + totals)
         return bp
 
 
+# Description: 朴素贝叶斯分类器类
 class naivebayes(classifier):
     def __init__(self, getfeatures):
         classifier.__init__(self, getfeatures)
         self.thresholds = {}
 
+    # 整篇文档的概率P(Document|Category)
     def docprob(self, item, cat):
         features = self.getfeatures(item)
-
         # Multiply the probabilities of all the features together
         p = 1
         for f in features: p *= self.weightedprob(f, cat, self.fprob)
         return p
 
+    # 计算P(Document|Category) * P(Category)，忽略P(Document)，
+    # 我们并不是在计算真实的概率值（够用即可）
     def prob(self, item, cat):
         catprob = self.catcount(cat) / self.totalcount()
         docprob = self.docprob(item, cat)
@@ -126,6 +133,7 @@ class naivebayes(classifier):
         if cat not in self.thresholds: return 1.0
         return self.thresholds[cat]
 
+    # 计算每个分类的概率，再结合阈值确定其分类
     def classify(self, item, default=None):
         probs = {}
         # Find the category with the highest probability
@@ -135,7 +143,6 @@ class naivebayes(classifier):
             if probs[cat] > max:
                 max = probs[cat]
                 best = cat
-
         # Make sure the probability exceeds threshold*next best
         for cat in probs:
             if cat == best: continue
@@ -143,6 +150,7 @@ class naivebayes(classifier):
         return best
 
 
+# Description: 费舍尔分类器类
 class fisherclassifier(classifier):
     def cprob(self, f, cat):
         # The frequency of this feature in this category
@@ -202,10 +210,3 @@ class fisherclassifier(classifier):
                 max = p
         return best
 
-
-def sampletrain(cl):
-    cl.train('Nobody owns the water.', 'good')
-    cl.train('the quick rabbit jumps fences', 'good')
-    cl.train('buy pharmaceuticals now', 'bad')
-    cl.train('make quick money at the online casino', 'bad')
-    cl.train('the quick brown fox jumps', 'good')
