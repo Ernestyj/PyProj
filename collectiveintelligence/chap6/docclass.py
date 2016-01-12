@@ -3,6 +3,8 @@ __author__ = 'DCLab'
 
 import re, math
 
+import sqlite3 as sqlite
+
 # Description: 从文本中提取不重复的单词
 def getwords(doc):
     splitter = re.compile('\\W*')
@@ -30,10 +32,10 @@ class classifier:
         self.cc = {}
         self.getfeatures = getfeatures
 
-    # def setdb(self, dbfile):
-    #     self.con = sqlite.connect(dbfile)
-    #     self.con.execute('create table if not exists fc(feature,category,count)')
-    #     self.con.execute('create table if not exists cc(category,count)')
+    def setdb(self, dbfile):
+        self.con = sqlite.connect(dbfile)
+        self.con.execute('create table if not exists fc(feature,category,count)')
+        self.con.execute('create table if not exists cc(category,count)')
 
     # 增加对特征/分类组合的计数值
     def incf(self, f, cat):
@@ -156,14 +158,10 @@ class fisherclassifier(classifier):
         # The frequency of this feature in this category
         clf = self.fprob(f, cat)
         if clf == 0: return 0
-
         # The frequency of this feature in all the categories
         freqsum = sum([self.fprob(f, c) for c in self.categories()])
-
-        # The probability is the frequency in this category divided by
-        # the overall frequency
+        # The probability is the frequency in this category divided by the overall frequency
         p = clf / (freqsum)
-
         return p
 
     def fisherprob(self, item, cat):
@@ -172,10 +170,8 @@ class fisherclassifier(classifier):
         features = self.getfeatures(item)
         for f in features:
             p *= (self.weightedprob(f, cat, self.cprob))
-
         # Take the natural log and multiply by -2
         fscore = -2 * math.log(p)
-
         # Use the inverse chi2 function to get a probability
         return self.invchi2(fscore, len(features) * 2)
 
@@ -210,3 +206,10 @@ class fisherclassifier(classifier):
                 max = p
         return best
 
+c1=fisherclassifier(getwords)
+c1.setdb('test1.db')
+sampletrain(c1)
+cl2=naivebayes(getwords)
+cl2.setdb('test1.db')
+cl2.classify('quick money')
+print('****************************************************************************************')
