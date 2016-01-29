@@ -5,7 +5,7 @@ import urllib2
 from BeautifulSoup import *
 from urlparse import urljoin
 import sqlite3 as sqlite
-import nn
+import ex_nn
 import BeautifulSoup as BeautifulSoup
 
 # 忽略单词列表
