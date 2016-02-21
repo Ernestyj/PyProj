@@ -1,11 +1,16 @@
-import sys
+import sys, re, urllib
 
 __author__ = 'Eugene'
 
-list=['xaa', 'xzz', 'axx', 'bbb', 'ccc']
-list.sort()
-print list
-list2=['xaa', 'xzz', 'axx', 'bbb', 'ccc']
-print list.extend(list2)
-s="s"
-"s".lower()
+
+def wget2(url):
+  try:
+    ufile = urllib.urlopen(url)
+    if ufile.info().gettype() == 'text/html':
+      print ufile.read()
+  except IOError:
+    print 'problem reading url:', url
+
+if __name__ == "__main__":
+
+    pass
