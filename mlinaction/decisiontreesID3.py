@@ -16,7 +16,6 @@ def test_createDataSet():
     #change to discrete values
     return dataSet, labels
 
-dataSet, labels = test_createDataSet()
 
 '''Shannon Entropy
 '''
@@ -85,7 +84,7 @@ def majorityCnt(classList):
     return sortedClassCount[0][0]
 
 
-'''创建树(递归)
+'''创建树(递归) ID3
 '''
 def createTree(dataSet, labels):
     classList = [example[-1] for example in dataSet]
@@ -103,3 +102,41 @@ def createTree(dataSet, labels):
         subLabels = labels[:]       #copy all of labels, so trees don't mess up existing labels
         myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
     return myTree
+
+
+'''根据决策树对册数数据进行分类
+'''
+def classify(inputTree,featLabels,testVec):
+    firstStr = inputTree.keys()[0]
+    secondDict = inputTree[firstStr]
+    featIndex = featLabels.index(firstStr)
+    key = testVec[featIndex]
+    valueOfFeat = secondDict[key]
+    if isinstance(valueOfFeat, dict):
+        classLabel = classify(valueOfFeat, featLabels, testVec)
+    else: classLabel = valueOfFeat
+    return classLabel
+
+
+'''存储(序列化)决策树
+'''
+def storeTree(inputTree, filename):
+    import pickle
+    fw = open(filename, 'w')
+    pickle.dump(inputTree, fw)
+    fw.close()
+
+'''获取(反序列化)决策树
+'''
+def grabTree(filename):
+    import pickle
+    fr = open(filename, 'r')
+    return pickle.load(fr)
+
+dataSet, labels = test_createDataSet()
+# myTree = createTree(dataSet, labels)
+# storeTree(myTree, 'myDecisionTree.txt')
+myTree = grabTree('myDecisionTree.txt')
+# import decisiontreesplot
+# decisiontreesplot.createPlot(myTree)
+print classify(myTree, labels, [1, 0])
