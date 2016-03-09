@@ -24,19 +24,47 @@ def sigmoid(inX):
 
 '''训练算法:梯度上升参数优化
 '''
-def gradAscent(dataMatIn, classLabels):
-    dataMatrix = mat(dataMatIn)             #convert to NumPy matrix
+def gradAscent(dataMatListIn, classLabels):
+    dataMatrix = mat(dataMatListIn)             #convert to NumPy matrix
     labelMat = mat(classLabels).transpose() #convert to NumPy matrix
     m,n = shape(dataMatrix)
     alpha = 0.001
     maxCycles = 500
     weights = ones((n,1))
     for k in range(maxCycles):              #heavy on matrix operations
+        # h和error都是向量
         h = sigmoid(dataMatrix*weights)     #matrix mult
         error = (labelMat - h)              #vector subtraction
         weights = weights + alpha * dataMatrix.transpose() * error #matrix mult
     return weights
-
+'''训练算法:随机梯度上升参数优化
+'''
+def stocGradAscent0(dataMatrix, classLabels):
+    m,n = shape(dataMatrix)
+    alpha = 0.01
+    weights = ones(n)   #initialize to all ones
+    for i in range(m):
+        # h和error都是单一数值
+        h = sigmoid(sum(dataMatrix[i]*weights))
+        error = classLabels[i] - h
+        weights = weights + alpha * error * dataMatrix[i]
+    return weights
+'''训练算法:随机梯度上升参数优化(两个主要改进)
+'''
+def stocGradAscent1(dataMatrix, classLabels, numIter=150):
+    m,n = shape(dataMatrix)
+    weights = ones(n)   #initialize to all ones
+    for j in range(numIter):
+        dataIndex = range(m)
+        for i in range(m):
+            #apha decreases with iteration, does not go to 0 because of the constant
+            alpha = 4/(1.0+j+i)+0.0001  # 改进1
+            randIndex = int(random.uniform(0,len(dataIndex)))   # 改进2
+            h = sigmoid(sum(dataMatrix[randIndex]*weights))
+            error = classLabels[randIndex] - h
+            weights = weights + alpha * error * dataMatrix[randIndex]
+            del(dataIndex[randIndex])
+    return weights
 
 '''绘制数据集和Logistic回归最佳拟合直线
 '''
@@ -66,4 +94,61 @@ def test_logistic():
     weightsMat = gradAscent(dataMat, labelMat)
     plotBestFit(weightsMat.getA(), dataMat, labelMat)
 
-test_logistic()
+# test_logistic()
+
+
+def test_stoic0_logistic():
+    dataMatList,labelMat = loadDataSet()
+    weightsMat = stocGradAscent0(array(dataMatList), labelMat)
+    plotBestFit(weightsMat, dataMatList, labelMat)
+
+# test_stoic0_logistic()
+
+def test_stoic1_logistic():
+    dataMatList,labelMat = loadDataSet()
+    weightsMat = stocGradAscent1(array(dataMatList), labelMat)
+    plotBestFit(weightsMat, dataMatList, labelMat)
+
+# test_stoic1_logistic()
+
+
+'''测试算法:用Logistic进行分类
+'''
+def classifyVector(inX, weights):
+    prob = sigmoid(sum(inX*weights))
+    if prob > 0.5: return 1.0
+    else: return 0.0
+
+
+def colicTest():
+    frTrain = open(os.getcwd()+'/data/horseColicTraining.txt')
+    frTest = open(os.getcwd()+'/data/horseColicTest.txt')
+    trainingSet = []; trainingLabels = []
+    for line in frTrain.readlines():
+        currLine = line.strip().split('\t')
+        lineArr =[]
+        for i in range(21):
+            lineArr.append(float(currLine[i]))
+        trainingSet.append(lineArr)
+        trainingLabels.append(float(currLine[21]))
+    trainWeights = stocGradAscent1(array(trainingSet), trainingLabels, 1000)
+    errorCount = 0; numTestVec = 0.0
+    for line in frTest.readlines():
+        numTestVec += 1.0
+        currLine = line.strip().split('\t')
+        lineArr =[]
+        for i in range(21):
+            lineArr.append(float(currLine[i]))
+        if int(classifyVector(array(lineArr), trainWeights))!= int(currLine[21]):
+            errorCount += 1
+    errorRate = (float(errorCount)/numTestVec)
+    print "the error rate of this test is: %f" % errorRate
+    return errorRate
+
+def multiTest():
+    numTests = 10; errorSum=0.0
+    for k in range(numTests):
+        errorSum += colicTest()
+    print "after %d iterations the average error rate is: %f" % (numTests, errorSum/float(numTests))
+
+multiTest()
