@@ -234,6 +234,7 @@ def calcWs(alphas,dataArr,classLabels):
         w += multiply(alphas[i]*labelMat[i],X[i,:].T)
     return w
 
+
 '''径向基核函数
 '''
 def kernelTrans(X, A, kTup): #calc the kernel or transform data to a higher dimensional space
@@ -256,8 +257,16 @@ def test_2():
     print '支持向量有:'
     for i in range(len(dataArrList)):
         if alphas[i]>0.0: print dataArrList[i], labelArrList[i]
+    ws = calcWs(alphas, dataArrList, labelArrList)
+    print 'w向量:'
+    print ws
+    dataMat = mat(dataArrList)
+    # 如果f大于0 ，那么其属于1类；如果f小于0 ，那么则属于-1类
+    f = dataMat[0]*mat(ws)+b
+    print '如果f大于0 ，那么其属于1类；如果f小于0 ，那么则属于-1类:\n f=', f
 
-# test_2()
+test_2()
+
 
 '''如果降低σ(K1)，那么训练错误率就会降低，但是测试错误率却会上升。
 
@@ -290,4 +299,4 @@ def test_Rbf(k1=1.3):
         if sign(predict)!=sign(labelArrList[i]): errorCount += 1
     print "the test error rate is: %f" % (float(errorCount)/m)
 
-test_Rbf()
+# test_Rbf()
