@@ -3,7 +3,7 @@
 
 import sys, os
 
-import ReadData
+import ReadData, TechIndex
 
 sys.path.append('/Users/eugene/ProgramData/PyStudy/finance')
 
