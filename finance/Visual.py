@@ -39,6 +39,27 @@ def plotWithXDate(df, figureSize=(20,5), tickWin=5):
 
 
 '''
+绘制布林带(跳过没有数据的日期)
+输入:df,注意df的index为时间
+输出:
+'''
+def plotBollingerBand(bollingDF, figureSize=(20, 5), tickWin=5):
+    fig, ax = plt.subplots(figsize=figureSize)
+    x = np.arange(len(bollingDF))
+    columnNames = bollingDF.columns.values
+    ax.plot(x, bollingDF[columnNames[0]], 'k')  # Close
+    ax.plot(x, bollingDF[columnNames[2]], 'b')  # MA
+    ax.plot(x, bollingDF[columnNames[3]], 'r-.', linewidth=3.0)  # Upper
+    ax.plot(x, bollingDF[columnNames[1]], 'r-.', linewidth=3.0)  # Lower
+    ax.xaxis.set_ticks(np.arange(0, len(bollingDF), tickWin))
+    ax.xaxis.set_major_formatter(MyFormatter(bollingDF.index))
+    ax.set_xlim(0, len(bollingDF))
+    fig.autofmt_xdate()
+    plt.legend()
+    plt.show()
+
+
+'''
 根据ohlcDF产生ohlcTuple,包含时间的转化(为candlestick_ohlc绘图准备参数)
 输入:ohlcDF
 输出:ohlcTuple

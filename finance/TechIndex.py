@@ -58,6 +58,18 @@ def MA(closeSeries, shortWin=5, longWin=20):
     longMA = pd.rolling_mean(closeSeries, window=longWin)
     return pd.DataFrame({'Close': closeSeries, str(shortWin)+'MA':shortMA, str(longWin)+'MA': longMA})
 
+'''
+计算Bollinger bands布林带
+输入:
+输出:DataFrame
+'''
+def BollingerBand(closeSeries, win=20):
+    MA = pd.rolling_mean(closeSeries, window=win)
+    std = pd.rolling_std(closeSeries, window=win)
+    up = MA+2*std
+    down = MA-2*std
+    return pd.DataFrame({'Close': closeSeries, 'MA':MA, 'Upper':up, 'Lower':down})
+
 
 '''
 计算EMA/EWMA
