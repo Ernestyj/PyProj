@@ -45,7 +45,7 @@ def readMacroEconomyFile(baseDir, fileName, startYear, yearNum=1):
 
     df = pd.read_csv(baseDir+fileName, index_col=3, sep=',', parse_dates=True, date_parser=dateparse)
     df = df.sort_index()
-    if yearNum==1: return df[str(startYear)]
+    if yearNum==1: return df[str(startYear)]['dataValue']
     else: return df[str(startYear):str(startYear+yearNum-1)]['dataValue']
 
 def readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=1):
@@ -65,8 +65,8 @@ def readMoneySupplyFile(baseDir, fileName, startYear, yearNum=1):
     else: return df[str(startYear):str(startYear+yearNum-1)]
 
 
-# usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-#            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
+usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+           21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
 usecols = [0,6,16,17,24,31]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
@@ -177,10 +177,12 @@ def prepareData(df, dfi, dfmacro, dfmoney):
     # tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
     #                      turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:],
     #                      cpi_ppi, fai_inverse, m2_m1))
+    tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
+                         turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
     # tempX = np.column_stack((opens[1:], averages[1:], volumes[1:], changes[1:], turns[1:],
     #                      rs[1:], amts[1:], cpi_ppi, fai_inverse, m2_m1))
-    tempX = np.column_stack((opens[1:], averages[1:], volumes[1:], changes[1:], turns[1:],
-                         rs[1:], amts[1:]))
+    # tempX = np.column_stack((opens[1:], averages[1:], volumes[1:], changes[1:], turns[1:],
+    #                      rs[1:], amts[1:]))
     # tempX = np.column_stack((averages[1:],
     #                      rs[1:], amts[1:], cpi_ppi, fai_inverse, m2_m1))
     X = np.hstack((tempX, techs))
@@ -195,8 +197,10 @@ def optimizeSVM(X_norm, y, kFolds=10):
     ])
     # grid search 多参数优化
     parameters = {
-        'svc__gamma': np.logspace(0, 3, 20),
-        'svc__C': np.logspace(0, 3, 10),
+        # 'svc__gamma': np.logspace(0, 3, 20),
+        # 'svc__C': np.logspace(0, 3, 10),
+        'svc__gamma': np.logspace(-3, 11, 8, base=2),
+        'svc__C': np.logspace(-3, 15, 10, base=2),
     }
     gs = grid_search.GridSearchCV(clf, parameters, verbose=1, refit=False, cv=kFolds, scoring='accuracy')
     gs.fit(X_norm, y)
@@ -230,28 +234,30 @@ baseDir = '/Users/eugene/Downloads/data/'
 stockCodes = ['000300.SH', '000016.SH', '000905.SH']
 
 
-i = 0
-startYear = 2014
-number = 2
-df = readWSDFile(baseDir, stockCodes[i], startYear, number)
-print 'Day count:', len(df)
-# print df.head(5)
-dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
-
-dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=number)
-dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=number)
-
-X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
-print np.shape(X), np.shape(y)
-normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
-X_norm = normalizer.transform(X)
-
-# estimator = PCA(n_components=20)
-# X_pca = estimator.fit_transform(X_norm)
-# estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
-# X_pca = estimator_kernel.fit_transform(X_norm)
-# plot3D(X_pca, y)
-
-# grid search 多参数优化
-gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
-print 'gamma=',gamma, 'C=',C, 'score=',score
+# i = 0
+# startYear = 2014
+# number = 2
+# df = readWSDFile(baseDir, stockCodes[i], startYear, number)
+# print 'Day count:', len(df)
+# # print df.head(5)
+# dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
+#
+# dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=number)
+# dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=number)
+#
+# X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
+# print np.shape(X), np.shape(y)
+# print actionDates
+# normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
+# # normalizer = preprocessing.StandardScaler().fit(X)
+# X_norm = normalizer.transform(X)
+#
+# # estimator = PCA(n_components=20)
+# # X_pca = estimator.fit_transform(X_norm)
+# # estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
+# # X_pca = estimator_kernel.fit_transform(X_norm)
+# # plot3D(X_pca, y)
+#
+# # grid search 多参数优化
+# gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
+# print 'gamma=',gamma, 'C=',C, 'score=',score

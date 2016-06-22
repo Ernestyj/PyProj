@@ -166,6 +166,7 @@ def optimizeSVM(X_norm, y, kFolds=10):
 # print 'Day count:', len(df)
 # X, y, actionDates = prepareData(df)
 # normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
+# # normalizer = preprocessing.StandardScaler().fit(X)
 # X_norm = normalizer.transform(X)
 #
 # estimator = PCA(n_components=7)

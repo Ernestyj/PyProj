@@ -6,13 +6,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import talib
+import math
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 30)
 pd.set_option('precision', 7)
 pd.options.display.float_format = '{:,.3f}'.format
 
-from WeekDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
+from DaysDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
 
 from sklearn import preprocessing, cross_validation, metrics, pipeline, grid_search
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier, ExtraTreesClassifier, BaggingClassifier
@@ -31,26 +32,23 @@ print 'Day count:', len(df)
 # print df.head(5)
 dfi = readWSDIndexFile(baseDir, instruments[i], startYear, yearNum)
 
-X, y, actionDates = prepareData(df, dfi)
+X, y, actionDates = prepareData(df, dfi, win=16)
 print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 
 
-def optimizeAdaBoostSGD(X_norm, y, kFolds=10):
+def optimizeEnsemble(X_norm, y, clf, kFolds=10):
+    clf = pipeline.Pipeline([
+        ('ensemble', clf),
+    ])
     # grid search 多参数优化
     parameters = {
-        # 'base_estimator__alpha': 10.0 ** (-np.arange(1, 7)),
-        'base_estimator__alpha': np.logspace(-8, -1, 8),
-        # 'n_estimators': np.linspace(1, 100, 10, dtype=np.dtype(np.int16)),
+        'ensemble__n_estimators': np.linspace(1, 200, 20, dtype=np.dtype(np.int16)),
     }
-    # sgd = SGDClassifier(loss='log', n_iter=np.ceil(10**6/len(X_norm)))
-    sgd = SGDClassifier(loss='log', n_iter=5, random_state=47)
-    clf = AdaBoostClassifier(base_estimator=sgd, n_estimators=200, random_state=47)
-
     gs = grid_search.GridSearchCV(clf, parameters, verbose=1, refit=False, cv=kFolds)
     gs.fit(X_norm, y)
-    return gs.best_params_['base_estimator__alpha'], gs.best_score_
+    return gs.best_params_['ensemble__n_estimators'], gs.best_score_
 
 def evaluate_cross_validation(clf, X, y, K):
     from scipy.stats import sem
@@ -61,8 +59,10 @@ def evaluate_cross_validation(clf, X, y, K):
     print ("Mean score: {0:.3f} (+/-{1:.3f})").format(np.mean(scores), sem(scores))
 
 
-clf = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log'), n_estimators=200)
+rf = RandomForestClassifier(max_depth=None, min_samples_split=2, max_features='sqrt', n_estimators=200, random_state=47)
+et = ExtraTreesClassifier(max_depth=None, min_samples_split=1, max_features=7)
 
-# evaluate_cross_validation(clf, X_norm, y, 10)
-alpha, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10)
-print 'alpha',alpha, 'score=',score
+
+# evaluate_cross_validation(rf, X_norm, y, 10)
+# n_estimators, score = optimizeEnsemble(X_norm, y, clf=rf, kFolds=10)
+# print 'n_estimators=',n_estimators, 'score=',score

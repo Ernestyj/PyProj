@@ -50,10 +50,19 @@ def optimizeEnsemble(X_norm, y, clf, kFolds=10):
     gs.fit(X_norm, y)
     return gs.best_params_['ensemble__n_estimators'], gs.best_score_
 
+def evaluate_cross_validation(clf, X, y, K):
+    from scipy.stats import sem
+    cv = cross_validation.KFold(len(y), K, shuffle=True, random_state=0)
+    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
+    print '*********************************evaluate_cross_validation*********************************'
+    print "scores:", scores
+    print ("Mean score: {0:.3f} (+/-{1:.3f})").format(np.mean(scores), sem(scores))
 
-rf = RandomForestClassifier(max_depth=None, min_samples_split=1, max_features=7)
+
+rf = RandomForestClassifier(max_depth=None, min_samples_split=2, max_features='sqrt', n_estimators=200, random_state=47)
 et = ExtraTreesClassifier(max_depth=None, min_samples_split=1, max_features=7)
 
-# evaluate_cross_validation(clf_sgd_hinge, X_norm, y, 10)
-n_estimators, score = optimizeEnsemble(X_norm, y, clf=rf, kFolds=10)
-print 'n_estimators=',n_estimators, 'score=',score
+
+# evaluate_cross_validation(rf, X_norm, y, 10)
+# n_estimators, score = optimizeEnsemble(X_norm, y, clf=rf, kFolds=10)
+# print 'n_estimators=',n_estimators, 'score=',score

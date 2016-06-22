@@ -19,8 +19,7 @@ import itertools
 from sklearn import preprocessing, svm, cross_validation, metrics, pipeline, grid_search
 from scipy.stats import sem
 
-from MonthDataPrepare import readWSDFile, prepareData, optimizeSVM, readWSDIndexFile, readAndCombineMacroEconomyFile, readMoneySupplyFile
-
+from WeekDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
 
 def readAndReWriteCSV(baseDir, instrument, startYear, yearNum=1):
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -82,6 +81,16 @@ def annualizedReturnRatioSingle(portfolio, C=100000.0, T=250.0, D=250.0):
     import math
     return math.pow(portfolio/C, D/T) - 1
 
+'''分类结果投票
+'''
+def vote_clf(svm, rf, sgd):
+    up = 0; down = 0
+    for i in (svm, rf, sgd):
+        if i==1: up += 1
+        else: down += 1
+    if up>down: return 1
+    else: return -1
+
 
 baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
@@ -92,20 +101,31 @@ initCapital = 100000000.0 # 一亿
 # startYear = 2015; yearNum = 1
 startYear = 2014; yearNum = 2
 
-df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
+df = readWSDFile(baseDir, instrument, startYear, yearNum)
 print 'Day count:', len(df)
+# print df.head(5)
 dfi = readWSDIndexFile(baseDir, instrument, startYear, yearNum)
-dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=yearNum)
-dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=yearNum)
-X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
-print np.shape(X), np.shape(y)
 
+X, y, actionDates = prepareData(df, dfi)
+print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
-gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
-print 'gamma=',gamma, 'C=',C, 'score=',score
-clf = svm.SVC(kernel='rbf', gamma=gamma, C=C)
+# gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
+clf = svm.SVC(kernel='rbf', gamma=32, C=32768)
 
+from EnsembleTest import optimizeEnsemble
+from AdaboostSGDTest import optimizeAdaBoostSGD
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier, ExtraTreesClassifier, BaggingClassifier, VotingClassifier
+from sklearn.linear_model import SGDClassifier
+clf_rf = RandomForestClassifier(max_depth=None, min_samples_split=1, max_features=7, random_state=47)
+# n_estimators, score = optimizeEnsemble(X_norm, y, clf=clf_rf, kFolds=10); print 'n_estimators=',n_estimators, 'score=',score
+# clf_rf = RandomForestClassifier(max_depth=None, min_samples_split=1, max_features=7, n_estimators=n_estimators)
+# alpha, n_estimators_, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10); print 'alpha',alpha, 'n_estimators=',n_estimators_, 'score=',score
+# clf_sgd = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log', n_iter=5, alpha=alpha), n_estimators=n_estimators_)
+
+clf_rf = RandomForestClassifier(n_estimators=200, random_state=47)
+clf_sgd = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log', alpha=0.1, random_state=47), n_estimators=200, random_state=47)
+voting = VotingClassifier(estimators=[('svm', clf), ('rf', clf_rf), ('sgd', clf_sgd)], voting='hard')
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)
 print pathName
@@ -132,14 +152,14 @@ class SVMStrategy(strategy.BacktestingStrategy):
         self.buys = []
         self.sells = []
 
-        self.clf = clf
+        self.clf = voting
         self.X_norm = X_norm
         self.y = y
         self.actionDates = actionDates
         self.win = win
         # print 'week count:', len(y)
 
-        self.monthCount = 1
+        self.weekCount = 1
         self.dayCount = 0
         self.errorCount = 0
         self.rightCount = 0
@@ -204,19 +224,19 @@ class SVMStrategy(strategy.BacktestingStrategy):
 
         self.dayCount += 1
         curDate = bars[self.__instrument].getDateTime().date()
-        if curDate!=self.actionDates[self.monthCount-1]: # 非每月最后一天
+        if curDate!=self.actionDates[self.weekCount-1]: # 非每周最后一天
             return
-        else:   # 每月最后一天
-            if self.monthCount < self.win+1:
-                self.monthCount += 1
+        else:   # 每周最后一天
+            if self.weekCount < self.win+1:
+                self.weekCount += 1
                 return
             else:
-                X_train = self.X_norm[self.monthCount - self.win - 1:self.monthCount - 1]
-                y_train = self.y[self.monthCount - self.win - 1:self.monthCount - 1]
-                X_test = self.X_norm[self.monthCount - 1]
-                y_test = self.y[self.monthCount - 1]
+                X_train = self.X_norm[self.weekCount-self.win-1:self.weekCount-1]
+                y_train = self.y[self.weekCount-self.win-1:self.weekCount-1]
+                X_test = self.X_norm[self.weekCount-1]
+                y_test = self.y[self.weekCount-1]
                 self.clf.fit(X_train, y_train)
-                result = self.clf.predict([X_test])[0]  # 为0表示跌，为1表示涨
+                result = self.clf.predict([X_test])[0]  # 为-1表示跌，为1表示涨
                 if result!=y_test: self.errorCount += 1 # 分类错误
                 else: self.rightCount += 1 # 分类正确
                 # If a position was not opened, check if we should enter a long position.
@@ -230,12 +250,12 @@ class SVMStrategy(strategy.BacktestingStrategy):
                 elif not self.__position.exitActive() and result==-1:
                     self.__position.exitMarket()
 
-                self.monthCount += 1
+                self.weekCount += 1
         pass
 
 
 def parameters_generator():
-    win = range(8, 23)
+    win = range(6, 23)
     return itertools.product(win)
 
 
@@ -260,22 +280,22 @@ def testWithBestParameters(win=10):
     print "总收益率: %.3f" % returnRatio(myStrategy.getResult(), C=initCapital)
     print "年化收益率: %.3f" % annualizedReturnRatioSingle(myStrategy.getResult(), C=initCapital, T=250.0*yearNum, D=250.0)
 
-    fig = plt.figure(figsize=(20,10))
-    ax1 = fig.add_subplot(211)
-    df[['closeArr']].plot(ax=ax1, lw=2.)
-    ax1.plot(buys, df.closeArr.ix[buys], '^', markersize=10, color='m')
-    ax1.plot(sells, df.closeArr.ix[sells], 'v', markersize=10, color='k')
-    ax2 = fig.add_subplot(212)
-    portfolio_ratio = df['portfolio']/initCapital
-    portfolio_ratio.plot(ax=ax2, lw=2.)
-    ax2.plot(buys, portfolio_ratio.ix[buys], '^', markersize=10, color='m')
-    ax2.plot(sells, portfolio_ratio.ix[sells], 'v', markersize=10, color='k')
-    # ax3 = fig.add_subplot(313)
-    # df['portfolio'].plot(ax=ax3, lw=2.)
-    # ax3.plot(buys, df['portfolio'].ix[buys], '^', markersize=10, color='m')
-    # ax3.plot(sells, df['portfolio'].ix[sells], 'v', markersize=10, color='k')
-    fig.tight_layout()
-    plt.show()
+    # fig = plt.figure(figsize=(20,10))
+    # ax1 = fig.add_subplot(211)
+    # df[['closeArr']].plot(ax=ax1, lw=2.)
+    # ax1.plot(buys, df.closeArr.ix[buys], '^', markersize=10, color='m')
+    # ax1.plot(sells, df.closeArr.ix[sells], 'v', markersize=10, color='k')
+    # ax2 = fig.add_subplot(212)
+    # portfolio_ratio = df['portfolio']/initCapital
+    # portfolio_ratio.plot(ax=ax2, lw=2.)
+    # ax2.plot(buys, portfolio_ratio.ix[buys], '^', markersize=10, color='m')
+    # ax2.plot(sells, portfolio_ratio.ix[sells], 'v', markersize=10, color='k')
+    # # ax3 = fig.add_subplot(313)
+    # # df['portfolio'].plot(ax=ax3, lw=2.)
+    # # ax3.plot(buys, df['portfolio'].ix[buys], '^', markersize=10, color='m')
+    # # ax3.plot(sells, df['portfolio'].ix[sells], 'v', markersize=10, color='k')
+    # fig.tight_layout()
+    # plt.show()
 
 
 def test(isOptimize=True, win=9):
@@ -287,4 +307,4 @@ def test(isOptimize=True, win=9):
         # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=8)
+test(isOptimize=False, win=9)

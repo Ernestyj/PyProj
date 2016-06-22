@@ -87,10 +87,10 @@ baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
 instruments = ['000300.SH', '000016.SH', '000905.SH']
-instrument = instruments[0]
+instrument = instruments[2]
 initCapital = 100000000.0 # 一亿
-# startYear = 2015; yearNum = 1
-startYear = 2014; yearNum = 2
+startYear = 2015; yearNum = 1
+# startYear = 2014; yearNum = 2
 
 df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
 print 'Day count:', len(df)
@@ -102,9 +102,13 @@ print np.shape(X), np.shape(y)
 
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
-gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
-print 'gamma=',gamma, 'C=',C, 'score=',score
-clf = svm.SVC(kernel='rbf', gamma=gamma, C=C)
+# gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=2)
+# clf = svm.SVC(kernel='rbf', gamma=8, C=2)
+# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
+# clf = svm.SVC(kernel='rbf', gamma=32, C=32)
+# clf = svm.SVC(kernel='rbf', gamma=8, C=2048)
+clf = svm.SVC(kernel='rbf', gamma=0.5, C=32768)
 
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)
@@ -260,22 +264,22 @@ def testWithBestParameters(win=10):
     print "总收益率: %.3f" % returnRatio(myStrategy.getResult(), C=initCapital)
     print "年化收益率: %.3f" % annualizedReturnRatioSingle(myStrategy.getResult(), C=initCapital, T=250.0*yearNum, D=250.0)
 
-    fig = plt.figure(figsize=(20,10))
-    ax1 = fig.add_subplot(211)
-    df[['closeArr']].plot(ax=ax1, lw=2.)
-    ax1.plot(buys, df.closeArr.ix[buys], '^', markersize=10, color='m')
-    ax1.plot(sells, df.closeArr.ix[sells], 'v', markersize=10, color='k')
-    ax2 = fig.add_subplot(212)
-    portfolio_ratio = df['portfolio']/initCapital
-    portfolio_ratio.plot(ax=ax2, lw=2.)
-    ax2.plot(buys, portfolio_ratio.ix[buys], '^', markersize=10, color='m')
-    ax2.plot(sells, portfolio_ratio.ix[sells], 'v', markersize=10, color='k')
-    # ax3 = fig.add_subplot(313)
-    # df['portfolio'].plot(ax=ax3, lw=2.)
-    # ax3.plot(buys, df['portfolio'].ix[buys], '^', markersize=10, color='m')
-    # ax3.plot(sells, df['portfolio'].ix[sells], 'v', markersize=10, color='k')
-    fig.tight_layout()
-    plt.show()
+    # fig = plt.figure(figsize=(20,10))
+    # ax1 = fig.add_subplot(211)
+    # df[['closeArr']].plot(ax=ax1, lw=2.)
+    # ax1.plot(buys, df.closeArr.ix[buys], '^', markersize=10, color='m')
+    # ax1.plot(sells, df.closeArr.ix[sells], 'v', markersize=10, color='k')
+    # ax2 = fig.add_subplot(212)
+    # portfolio_ratio = df['portfolio']/initCapital
+    # portfolio_ratio.plot(ax=ax2, lw=2.)
+    # ax2.plot(buys, portfolio_ratio.ix[buys], '^', markersize=10, color='m')
+    # ax2.plot(sells, portfolio_ratio.ix[sells], 'v', markersize=10, color='k')
+    # # ax3 = fig.add_subplot(313)
+    # # df['portfolio'].plot(ax=ax3, lw=2.)
+    # # ax3.plot(buys, df['portfolio'].ix[buys], '^', markersize=10, color='m')
+    # # ax3.plot(sells, df['portfolio'].ix[sells], 'v', markersize=10, color='k')
+    # fig.tight_layout()
+    # plt.show()
 
 
 def test(isOptimize=True, win=9):
@@ -287,4 +291,4 @@ def test(isOptimize=True, win=9):
         # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=8)
+test(isOptimize=False, win=9)

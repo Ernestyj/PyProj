@@ -19,8 +19,7 @@ import itertools
 from sklearn import preprocessing, svm, cross_validation, metrics, pipeline, grid_search
 from scipy.stats import sem
 
-from MonthDataPrepare import readWSDFile, prepareData, optimizeSVM, readWSDIndexFile, readAndCombineMacroEconomyFile, readMoneySupplyFile
-
+from WeekDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
 
 def readAndReWriteCSV(baseDir, instrument, startYear, yearNum=1):
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -92,14 +91,13 @@ initCapital = 100000000.0 # 一亿
 # startYear = 2015; yearNum = 1
 startYear = 2014; yearNum = 2
 
-df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
+df = readWSDFile(baseDir, instrument, startYear, yearNum)
 print 'Day count:', len(df)
+# print df.head(5)
 dfi = readWSDIndexFile(baseDir, instrument, startYear, yearNum)
-dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=yearNum)
-dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=yearNum)
-X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
-print np.shape(X), np.shape(y)
 
+X, y, actionDates = prepareData(df, dfi)
+print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
@@ -139,7 +137,7 @@ class SVMStrategy(strategy.BacktestingStrategy):
         self.win = win
         # print 'week count:', len(y)
 
-        self.monthCount = 1
+        self.weekCount = 1
         self.dayCount = 0
         self.errorCount = 0
         self.rightCount = 0
@@ -204,17 +202,17 @@ class SVMStrategy(strategy.BacktestingStrategy):
 
         self.dayCount += 1
         curDate = bars[self.__instrument].getDateTime().date()
-        if curDate!=self.actionDates[self.monthCount-1]: # 非每月最后一天
+        if curDate!=self.actionDates[self.weekCount-1]: # 非每周最后一天
             return
-        else:   # 每月最后一天
-            if self.monthCount < self.win+1:
-                self.monthCount += 1
+        else:   # 每周最后一天
+            if self.weekCount < self.win+1:
+                self.weekCount += 1
                 return
             else:
-                X_train = self.X_norm[self.monthCount - self.win - 1:self.monthCount - 1]
-                y_train = self.y[self.monthCount - self.win - 1:self.monthCount - 1]
-                X_test = self.X_norm[self.monthCount - 1]
-                y_test = self.y[self.monthCount - 1]
+                X_train = self.X_norm[self.weekCount-self.win-1:self.weekCount-1]
+                y_train = self.y[self.weekCount-self.win-1:self.weekCount-1]
+                X_test = self.X_norm[self.weekCount-1]
+                y_test = self.y[self.weekCount-1]
                 self.clf.fit(X_train, y_train)
                 result = self.clf.predict([X_test])[0]  # 为0表示跌，为1表示涨
                 if result!=y_test: self.errorCount += 1 # 分类错误
@@ -230,12 +228,12 @@ class SVMStrategy(strategy.BacktestingStrategy):
                 elif not self.__position.exitActive() and result==-1:
                     self.__position.exitMarket()
 
-                self.monthCount += 1
+                self.weekCount += 1
         pass
 
 
 def parameters_generator():
-    win = range(8, 23)
+    win = range(6, 23)
     return itertools.product(win)
 
 
@@ -279,12 +277,17 @@ def testWithBestParameters(win=10):
 
 
 def test(isOptimize=True, win=9):
-    if isOptimize:
-        # 寻找最佳参数
+    # # 寻找最佳参数
+    # results = local.run(SVMStrategy, feed, parameters_generator())
+    # print 'Parameters:', results.getParameters(), 'Result:', results.getResult()
+    # win = results.getParameters()[0]
+    # # 用最佳参数回测
+    # testWithBestParameters(win=win)
+    if isOptimize: # 寻找最佳参数
         results = local.run(SVMStrategy, feed, parameters_generator())
         print 'Parameters:', results.getParameters(), 'Result:', results.getResult()
-    else:
-        # 用最佳参数回测
+        print results.getParameters()[0]
+    else: # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=8)
+test(isOptimize=False, win=9)

@@ -12,7 +12,7 @@ pd.set_option('display.max_columns', 30)
 pd.set_option('precision', 7)
 pd.options.display.float_format = '{:,.3f}'.format
 
-from WeekDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
+from MonthDataPrepare import readWSDFile, prepareData, optimizeSVM, readWSDIndexFile, readAndCombineMacroEconomyFile, readMoneySupplyFile
 
 from sklearn import preprocessing, cross_validation, metrics, pipeline, grid_search
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier, ExtraTreesClassifier, BaggingClassifier
@@ -21,18 +21,22 @@ from sklearn.linear_model import SGDClassifier, LogisticRegression, RidgeClassif
 from sklearn.tree import DecisionTreeClassifier
 
 baseDir = '/Users/eugene/Downloads/Data/'
+# baseDir = '/Users/eugene/Downloads/marketQuotationData/'
+# 沪深300 上证50 中证500
 instruments = ['000300.SH', '000016.SH', '000905.SH']
-i = 0
-startYear = 2014
-yearNum = 2
+instrument = instruments[2]
+initCapital = 100000000.0 # 一亿
+# startYear = 2015; yearNum = 1
+startYear = 2015; yearNum = 1
 
-df = readWSDFile(baseDir, instruments[i], startYear, yearNum)
+df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
 print 'Day count:', len(df)
-# print df.head(5)
-dfi = readWSDIndexFile(baseDir, instruments[i], startYear, yearNum)
+dfi = readWSDIndexFile(baseDir, instrument, startYear, yearNum)
+dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=yearNum)
+dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=yearNum)
+X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
+print np.shape(X), np.shape(y)
 
-X, y, actionDates = prepareData(df, dfi)
-print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 
@@ -52,17 +56,5 @@ def optimizeAdaBoostSGD(X_norm, y, kFolds=10):
     gs.fit(X_norm, y)
     return gs.best_params_['base_estimator__alpha'], gs.best_score_
 
-def evaluate_cross_validation(clf, X, y, K):
-    from scipy.stats import sem
-    cv = cross_validation.KFold(len(y), K, shuffle=True, random_state=0)
-    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
-    print '*********************************evaluate_cross_validation*********************************'
-    print "scores:", scores
-    print ("Mean score: {0:.3f} (+/-{1:.3f})").format(np.mean(scores), sem(scores))
-
-
-clf = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log'), n_estimators=200)
-
-# evaluate_cross_validation(clf, X_norm, y, 10)
-alpha, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10)
-print 'alpha',alpha, 'score=',score
+# alpha, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10)
+# print 'alpha',alpha, 'score=',score

@@ -42,6 +42,7 @@ def readWSDFile(baseDir, stockCode, startYear, yearNum=1):
 usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
 usecols = [0,6,16,17,24,31]
+# usecols = [0, 2,11,24,26,29,30]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -54,7 +55,7 @@ def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
         else: df = df.append(tempDF)
     return df
 
-def prepareData(df, dfi):
+def prepareData(df, dfi, win=5):
     # open（开盘价均值）,high（最高价均值）,low（最低价均值）,volume（成交量均值）,amount（成交额均值）,
     # change（涨跌均值）,changePct（涨跌幅均值）,average（均价均值）,turn（换手率均值）,
     # r(收益率均值),
@@ -81,9 +82,22 @@ def prepareData(df, dfi):
     upOrDowns = [0]  # 为0表示跌，为1表示涨
     actionDates = [0]
     # fourWeekAvgAmts = [0];#暂不加入计算
-    week = df.index[0].week
+    count = 0
     for i in range(len(df)):
-        if week != df.index[i].week:
+        if count<win:
+            openArr.append(df['Open'][i])
+            highArr.append(df['High'][i])
+            lowArr.append(df['Low'][i])
+            volumeArr.append(df['Volume'][i])
+            changeArr.append(df['Chg'][i])
+            changePctArr.append(df['Chg Pct'][i])
+            averageArr.append(df['Avg'][i])
+            turnArr.append(df['Turn'][i])
+            closeArr.append(df['Close'][i])
+            amtArr.append(df['Amount'][i])
+            techArr.append(dfi.iloc[i].values)
+            count += 1
+        if count==win:
             opens.append(np.mean(openArr))
             highs.append(np.mean(highArr))
             lows.append(np.mean(lowArr))
@@ -107,42 +121,32 @@ def prepareData(df, dfi):
             del openArr[:]; del highArr[:]; del lowArr[:]; del volumeArr[:]; del changeArr[:]; del changePctArr[:];
             del averageArr[:]; del turnArr[:]; del closeArr[:]; del amtArr[:]
             del techArr[:]
-            week = df.index[i].week
-        openArr.append(df['Open'][i])
-        highArr.append(df['High'][i])
-        lowArr.append(df['Low'][i])
-        volumeArr.append(df['Volume'][i])
-        changeArr.append(df['Chg'][i])
-        changePctArr.append(df['Chg Pct'][i])
-        averageArr.append(df['Avg'][i])
-        turnArr.append(df['Turn'][i])
-        closeArr.append(df['Close'][i])
-        amtArr.append(df['Amount'][i])
-        techArr.append(dfi.iloc[i].values)
-    # 处理最后一周数据
-    opens.append(np.mean(openArr))
-    highs.append(np.mean(highArr))
-    lows.append(np.mean(lowArr))
-    volumes.append(np.mean(volumeArr))
-    changes.append(np.mean(changeArr))
-    changePcts.append(np.mean(changePctArr))
-    averages.append(np.mean(averageArr))
-    turns.append(np.mean(turnArr))
-    rs.append((closeArr[-1] - closeArr[0]) / closeArr[0])
-    lastRs.append(rs[-2])
-    weekAgoRs.append(lastRs[-2])
-    amts.append(np.mean(amtArr))
-    lastAmts.append(amts[-2])
-    techs.append(np.mean(techArr, axis=0))
-    upOrDown = -1
-    if rs[-1] > 0.0: upOrDown = 1
-    elif rs[-1] == 0.0: upOrDown = upOrDowns[-1]  # 无涨跌时，按前周的涨跌情况
-    else: upOrDown = -1
-    upOrDowns.append(upOrDown)
-    actionDates.append(df.index[i].date())
+            count = 0
+    if count!=0: # 处理剩余数据
+        opens.append(np.mean(openArr))
+        highs.append(np.mean(highArr))
+        lows.append(np.mean(lowArr))
+        volumes.append(np.mean(volumeArr))
+        changes.append(np.mean(changeArr))
+        changePcts.append(np.mean(changePctArr))
+        averages.append(np.mean(averageArr))
+        turns.append(np.mean(turnArr))
+        rs.append((closeArr[-1] - closeArr[0]) / closeArr[0])
+        lastRs.append(rs[-2])
+        weekAgoRs.append(lastRs[-2])
+        amts.append(np.mean(amtArr))
+        lastAmts.append(amts[-2])
+        techs.append(np.mean(techArr, axis=0))
+        upOrDown = -1
+        if rs[-1] > 0.0: upOrDown = 1
+        elif rs[-1] == 0.0: upOrDown = upOrDowns[-1]  # 无涨跌时，按前周的涨跌情况
+        else: upOrDown = -1
+        upOrDowns.append(upOrDown)
+        actionDates.append(df.index[i].date())
 
     tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
                          turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
+    # tempX = np.column_stack((volumes[1:], changes[1:], changePcts[1:], turns[1:], amts[1:]))
     X = np.hstack((tempX, techs))
     y = upOrDowns[2:]  # 涨跌数组向后移一位,表当前周数据预测下一周涨跌
     y.append(upOrDowns[-1])  # 涨跌数组最后一位按前一位数据补上
@@ -192,26 +196,27 @@ def plot3D(X_pca, y):
 baseDir = '/Users/eugene/Downloads/data/'
 stockCodes = ['000300.SH', '000016.SH', '000905.SH']
 
-# i = 0
-# startYear = 2014
-# number = 2
-# df = readWSDFile(baseDir, stockCodes[i], startYear, number)
-# print 'Day count:', len(df)
-# # print df.head(5)
-# dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
-#
-# X, y, actionDates = prepareData(df, dfi)
-# print np.shape(X), actionDates
-# normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
-# # normalizer = preprocessing.StandardScaler().fit(X)
-# X_norm = normalizer.transform(X)
-#
-# # estimator = PCA(n_components=20)
-# # X_pca = estimator.fit_transform(X_norm)
-# # estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
-# # X_pca = estimator_kernel.fit_transform(X_norm)
-# # plot3D(X_pca, y)
-#
-# # grid search 多参数优化
-# gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
-# print 'gamma=',gamma, 'C=',C, 'score=',score
+i = 0
+startYear = 2014
+number = 2
+df = readWSDFile(baseDir, stockCodes[i], startYear, number)
+print 'Day count:', len(df)
+# print df.head(5)
+dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
+
+X, y, actionDates = prepareData(df, dfi, win=16)
+print np.shape(X), np.shape(actionDates), np.shape(y);
+# print y, #actionDates
+normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
+# normalizer = preprocessing.StandardScaler().fit(X)
+X_norm = normalizer.transform(X)
+
+# estimator = PCA(n_components=20)
+# X_pca = estimator.fit_transform(X_norm)
+# estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
+# X_pca = estimator_kernel.fit_transform(X_norm)
+# plot3D(X_pca, y)
+
+# grid search 多参数优化
+gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
+print 'gamma=',gamma, 'C=',C, 'score=',score

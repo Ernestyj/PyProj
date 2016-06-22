@@ -39,6 +39,12 @@ def readWSDFile(baseDir, stockCode, startYear, yearNum=1):
     return df
 
 
+usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+           21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
+usecols = [0,6,16,17,24,31]
+usecols = [0, 2,11,24,26,29,30]
+# usecols = [0, 5,7,11,19,24,26,28]
+# usecols = [0, 2,5,7,11,19,24,26,28,29,30]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -46,42 +52,108 @@ def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     df = 0
     for i in range(yearNum):
         tempDF = pd.read_csv(baseDir+'I'+stockCode+'/wsd_'+stockCode+'_'+str(startYear+i)+'.csv',
-                                index_col=0, sep=',', parse_dates=True, date_parser=dateparse)
+                                index_col=0, sep=',', parse_dates=True, date_parser=dateparse, usecols=usecols)
         if i==0: df = tempDF
         else: df = df.append(tempDF)
     return df
-
 
 def prepareData(df, dfi, win=5):
     # open（开盘价均值）,high（最高价均值）,low（最低价均值）,volume（成交量均值）,amount（成交额均值）,
     # change（涨跌均值）,changePct（涨跌幅均值）,average（均价均值）,turn（换手率均值）,
     # r(收益率均值),
+    # lastR(上周收益率), weekAgoR（前周收益率）, lastAmt(上周成交额均值)
     # 38种技术指标
-    open = pd.rolling_mean(df['Open'], window=win)
-    high = pd.rolling_mean(df['High'], window=win)
-    low = pd.rolling_mean(df['Low'], window=win)
-    volume = pd.rolling_mean(df['Volume'], window=win)
-    amount = pd.rolling_mean(df['Amount'], window=win)
-    change = pd.rolling_mean(df['Chg'], window=win)
-    changePct = pd.rolling_mean(df['Chg Pct'], window=win)
-    average = pd.rolling_mean(df['Avg'], window=win)
-    turn = pd.rolling_mean(df['Turn'], window=win)
-    dailyreturn = df['Close'].pct_change()
-    dailyreturn[0] = dailyreturn[1]
-    r = pd.rolling_mean(dailyreturn, window=win)
+    # 跳过第一个值
+    opens = [0]; openArr = []
+    highs = [0]; highArr = []
+    lows = [0]; lowArr = []
+    volumes = [0]; volumeArr = []
+    changes = [0]; changeArr = []
+    changePcts = [0]; changePctArr = []
+    averages = [0]; averageArr = []
+    turns = [0]; turnArr = []
+    rs = [0]; closeArr = []
+    lastRs = [0]
+    weekAgoRs = [0]
+    amts = [0]; amtArr = []
+    lastAmts = [0]
 
-    techDF = pd.rolling_mean(dfi, window=win)
+    techs = []
+    techArr = []
 
-    tempX = np.column_stack((open[win-1:], high[win-1:], low[win-1:], volume[win-1:], amount[win-1:],
-                        change[win-1:], changePct[win-1:], average[win-1:], turn[win-1:], r[win-1:]))
+    upOrDowns = [0]  # 为0表示跌，为1表示涨
+    actionDates = [0]
+    # fourWeekAvgAmts = [0];#暂不加入计算
+    count = 0
+    for i in range(len(df)):
+        if count<win:
+            openArr.append(df['Open'][i])
+            highArr.append(df['High'][i])
+            lowArr.append(df['Low'][i])
+            volumeArr.append(df['Volume'][i])
+            changeArr.append(df['Chg'][i])
+            changePctArr.append(df['Chg Pct'][i])
+            averageArr.append(df['Avg'][i])
+            turnArr.append(df['Turn'][i])
+            closeArr.append(df['Close'][i])
+            amtArr.append(df['Amount'][i])
+            techArr.append(dfi.iloc[i].values)
+            count += 1
+        if count==win:
+            opens.append(np.mean(openArr))
+            highs.append(np.mean(highArr))
+            lows.append(np.mean(lowArr))
+            volumes.append(np.mean(volumeArr))
+            changes.append(np.mean(changeArr))
+            changePcts.append(np.mean(changePctArr))
+            averages.append(np.mean(averageArr))
+            turns.append(np.mean(turnArr))
+            rs.append((closeArr[-1] - closeArr[0]) / closeArr[0])
+            lastRs.append(rs[-2])
+            weekAgoRs.append(lastRs[-2])
+            amts.append(np.mean(amtArr))
+            lastAmts.append(amts[-2])
+            techs.append(np.mean(techArr, axis=0))
+            upOrDown = -1
+            if rs[-1] > 0.0: upOrDown = 1
+            elif rs[-1] == 0.0: upOrDown = upOrDowns[-1]  # 无涨跌时，按前周的涨跌情况
+            else: upOrDown = -1
+            upOrDowns.append(upOrDown)
+            actionDates.append(df.index[i].date())
+            del openArr[:]; del highArr[:]; del lowArr[:]; del volumeArr[:]; del changeArr[:]; del changePctArr[:];
+            del averageArr[:]; del turnArr[:]; del closeArr[:]; del amtArr[:]
+            del techArr[:]
+            count = 0
+    if count!=0: # 处理剩余数据
+        opens.append(np.mean(openArr))
+        highs.append(np.mean(highArr))
+        lows.append(np.mean(lowArr))
+        volumes.append(np.mean(volumeArr))
+        changes.append(np.mean(changeArr))
+        changePcts.append(np.mean(changePctArr))
+        averages.append(np.mean(averageArr))
+        turns.append(np.mean(turnArr))
+        rs.append((closeArr[-1] - closeArr[0]) / closeArr[0])
+        lastRs.append(rs[-2])
+        weekAgoRs.append(lastRs[-2])
+        amts.append(np.mean(amtArr))
+        lastAmts.append(amts[-2])
+        techs.append(np.mean(techArr, axis=0))
+        upOrDown = -1
+        if rs[-1] > 0.0: upOrDown = 1
+        elif rs[-1] == 0.0: upOrDown = upOrDowns[-1]  # 无涨跌时，按前周的涨跌情况
+        else: upOrDown = -1
+        upOrDowns.append(upOrDown)
+        actionDates.append(df.index[i].date())
 
-    X = np.hstack((tempX, techDF.values[win-1:]))
-    y = []
-    for i in range(win-1, len(dailyreturn)):
-        if dailyreturn[i]<0: y.append(-1)
-        elif dailyreturn[i]>0: y.append(1)
-        else: y.append(y[-1])   # 按前一个值填充
-    return X, y
+    # tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
+    #                      turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
+    # tempX = np.column_stack((volumes[1:], changes[1:], changePcts[1:], turns[1:], amts[1:]))
+    tempX = np.column_stack((changes[1:], changePcts[1:]))
+    X = np.hstack((tempX, techs))
+    y = upOrDowns[2:]  # 涨跌数组向后移一位,表当前周数据预测下一周涨跌
+    y.append(upOrDowns[-1])  # 涨跌数组最后一位按前一位数据补上
+    return X, y, actionDates[1:]
 
 
 def optimizeSVM(X_norm, y, kFolds=10):
@@ -90,8 +162,12 @@ def optimizeSVM(X_norm, y, kFolds=10):
     ])
     # grid search 多参数优化
     parameters = {
-        'svc__gamma': np.logspace(-1, 3, 20),
-        'svc__C': np.logspace(-1, 3, 10),
+        # 'svc__gamma': np.logspace(-8, 3, 10),
+        # 'svc__C': np.logspace(-5, 5, 10),
+        'svc__gamma': np.logspace(-3, 11, 8, base=2),
+        'svc__C': np.logspace(-3, 15, 10, base=2),
+        # 'svc__gamma': [0.001,0.01,0.1,1,10,100,1000],
+        # 'svc__C': [0.001,0.01,0.1,1,10,100,1000,10000,100000],
     }
     gs = grid_search.GridSearchCV(clf, parameters, verbose=1, refit=False, cv=kFolds)
     gs.fit(X_norm, y)
@@ -123,20 +199,25 @@ def plot3D(X_pca, y):
 baseDir = '/Users/eugene/Downloads/data/'
 stockCodes = ['000300.SH', '000016.SH', '000905.SH']
 
-df = readWSDFile(baseDir, stockCodes[0], 2014, 2)
+i = 2
+startYear = 2015
+number = 1
+df = readWSDFile(baseDir, stockCodes[i], startYear, number)
 print 'Day count:', len(df)
 # print df.head(5)
-dfi = readWSDIndexFile(baseDir, stockCodes[0], 2014, 2)
-X, y = prepareData(df, dfi, win=30)
-# print np.shape(X)
+dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
+
+X, y, actionDates = prepareData(df, dfi, win=16)
+print np.shape(X), np.shape(actionDates), np.shape(y);
+# print y, #actionDates
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
+# normalizer = preprocessing.StandardScaler().fit(X)
 X_norm = normalizer.transform(X)
 
-estimator = PCA(n_components=10)
-estimator_kernel = KernelPCA(n_components=12, kernel='rbf')
+# estimator = PCA(n_components=20)
 # X_pca = estimator.fit_transform(X_norm)
-X_pca = estimator_kernel.fit_transform(X_norm)
-
+# estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
+# X_pca = estimator_kernel.fit_transform(X_norm)
 # plot3D(X_pca, y)
 
 # grid search 多参数优化
