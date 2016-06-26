@@ -86,10 +86,10 @@ baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
 instruments = ['000300.SH', '000016.SH', '000905.SH']
-instrument = instruments[2]
+instrument = instruments[1]
 initCapital = 100000000.0 # 一亿
-startYear = 2015; yearNum = 1
-# startYear = 2014; yearNum = 2
+# startYear = 2015; yearNum = 1
+startYear = 2014; yearNum = 2
 
 df = readWSDFile(baseDir, instrument, startYear, yearNum)
 print 'Day count:', len(df)
@@ -102,9 +102,9 @@ normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 # gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
 # clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
-# clf = svm.SVC(kernel='rbf', gamma=2, C=2)
-clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
-# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
+clf = svm.SVC(kernel='rbf', gamma=512, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
 # clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
 # clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
 
@@ -237,7 +237,7 @@ class SVMStrategy(strategy.BacktestingStrategy):
 
 
 def parameters_generator():
-    win = range(8, 23)
+    win = range(13, 23)
     return itertools.product(win)
 
 
@@ -288,4 +288,4 @@ def test(isOptimize=True, win=9):
     else: # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=10)
+test(isOptimize=False, win=9)

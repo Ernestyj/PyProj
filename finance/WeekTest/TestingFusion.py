@@ -96,10 +96,10 @@ baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
 instruments = ['000300.SH', '000016.SH', '000905.SH']
-instrument = instruments[0]
+instrument = instruments[2]
 initCapital = 100000000.0 # 一亿
-# startYear = 2015; yearNum = 1
-startYear = 2014; yearNum = 2
+startYear = 2015; yearNum = 1
+# startYear = 2014; yearNum = 2
 
 df = readWSDFile(baseDir, instrument, startYear, yearNum)
 print 'Day count:', len(df)
@@ -111,7 +111,12 @@ print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 # gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
-clf = svm.SVC(kernel='rbf', gamma=32, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=128, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=128, C=8192)
+# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=512)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+clf = svm.SVC(kernel='rbf', gamma=2048, C=32)
 
 from EnsembleTest import optimizeEnsemble
 from AdaboostSGDTest import optimizeAdaBoostSGD
@@ -124,7 +129,7 @@ clf_rf = RandomForestClassifier(max_depth=None, min_samples_split=1, max_feature
 # clf_sgd = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log', n_iter=5, alpha=alpha), n_estimators=n_estimators_)
 
 clf_rf = RandomForestClassifier(n_estimators=200, random_state=47)
-clf_sgd = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log', alpha=0.1, random_state=47), n_estimators=200, random_state=47)
+clf_sgd = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log', alpha=0.00000001, random_state=47), n_estimators=200, random_state=47)
 voting = VotingClassifier(estimators=[('svm', clf), ('rf', clf_rf), ('sgd', clf_sgd)], voting='hard')
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)
@@ -307,4 +312,4 @@ def test(isOptimize=True, win=9):
         # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=9)
+test(isOptimize=False, win=8)

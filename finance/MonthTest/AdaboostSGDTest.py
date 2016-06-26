@@ -26,7 +26,7 @@ baseDir = '/Users/eugene/Downloads/Data/'
 instruments = ['000300.SH', '000016.SH', '000905.SH']
 instrument = instruments[2]
 initCapital = 100000000.0 # 一亿
-# startYear = 2015; yearNum = 1
+# startYear = 2014; yearNum = 2
 startYear = 2015; yearNum = 1
 
 df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)

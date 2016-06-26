@@ -149,7 +149,7 @@ def prepareData(df, dfi, win=5):
     # tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
     #                      turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
     # tempX = np.column_stack((volumes[1:], changes[1:], changePcts[1:], turns[1:], amts[1:]))
-    tempX = np.column_stack((changes[1:], changePcts[1:]))
+    tempX = np.column_stack((changes[1:], changePcts[1:], volumes[1:], amts[1:], turns[1:]))
     X = np.hstack((tempX, techs))
     y = upOrDowns[2:]  # 涨跌数组向后移一位,表当前周数据预测下一周涨跌
     y.append(upOrDowns[-1])  # 涨跌数组最后一位按前一位数据补上
@@ -199,27 +199,27 @@ def plot3D(X_pca, y):
 baseDir = '/Users/eugene/Downloads/data/'
 stockCodes = ['000300.SH', '000016.SH', '000905.SH']
 
-i = 2
-startYear = 2015
-number = 1
-df = readWSDFile(baseDir, stockCodes[i], startYear, number)
-print 'Day count:', len(df)
-# print df.head(5)
-dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
-
-X, y, actionDates = prepareData(df, dfi, win=16)
-print np.shape(X), np.shape(actionDates), np.shape(y);
-# print y, #actionDates
-normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
-# normalizer = preprocessing.StandardScaler().fit(X)
-X_norm = normalizer.transform(X)
-
-# estimator = PCA(n_components=20)
-# X_pca = estimator.fit_transform(X_norm)
-# estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
-# X_pca = estimator_kernel.fit_transform(X_norm)
-# plot3D(X_pca, y)
-
-# grid search 多参数优化
-gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
-print 'gamma=',gamma, 'C=',C, 'score=',score
+# i = 2
+# startYear = 2014
+# number = 2
+# df = readWSDFile(baseDir, stockCodes[i], startYear, number)
+# print 'Day count:', len(df)
+# # print df.head(5)
+# dfi = readWSDIndexFile(baseDir, stockCodes[i], startYear, number)
+#
+# X, y, actionDates = prepareData(df, dfi, win=16)
+# print np.shape(X), np.shape(actionDates), np.shape(y);
+# # print y, #actionDates
+# normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
+# # normalizer = preprocessing.StandardScaler().fit(X)
+# X_norm = normalizer.transform(X)
+#
+# # estimator = PCA(n_components=20)
+# # X_pca = estimator.fit_transform(X_norm)
+# # estimator_kernel = KernelPCA(n_components=50, kernel='rbf')
+# # X_pca = estimator_kernel.fit_transform(X_norm)
+# # plot3D(X_pca, y)
+#
+# # grid search 多参数优化
+# gamma, C, score = optimizeSVM(X_norm, y, kFolds=10)
+# print 'gamma=',gamma, 'C=',C, 'score=',score

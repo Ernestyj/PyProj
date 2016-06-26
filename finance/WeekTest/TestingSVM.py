@@ -101,12 +101,12 @@ print np.shape(X)
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 # gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
-clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
-# clf = svm.SVC(kernel='rbf', gamma=8, C=2)
+# clf = svm.SVC(kernel='rbf', gamma=128, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=128, C=8192)
 # clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
-# clf = svm.SVC(kernel='rbf', gamma=32, C=32)
-# clf = svm.SVC(kernel='rbf', gamma=8, C=2048)
-# clf = svm.SVC(kernel='rbf', gamma=0.5, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=512)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+clf = svm.SVC(kernel='rbf', gamma=2048, C=32)
 
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)

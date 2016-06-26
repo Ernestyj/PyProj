@@ -22,9 +22,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 baseDir = '/Users/eugene/Downloads/Data/'
 instruments = ['000300.SH', '000016.SH', '000905.SH']
-i = 0
-startYear = 2014
-yearNum = 2
+i = 2
+startYear = 2015
+yearNum = 1
 
 df = readWSDFile(baseDir, instruments[i], startYear, yearNum)
 print 'Day count:', len(df)
@@ -64,5 +64,5 @@ def evaluate_cross_validation(clf, X, y, K):
 clf = AdaBoostClassifier(base_estimator=SGDClassifier(loss='log'), n_estimators=200)
 
 # evaluate_cross_validation(clf, X_norm, y, 10)
-alpha, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10)
-print 'alpha',alpha, 'score=',score
+# alpha, score = optimizeAdaBoostSGD(X_norm, y, kFolds=10)
+# print 'alpha',alpha, 'score=',score

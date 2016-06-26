@@ -68,6 +68,7 @@ def readMoneySupplyFile(baseDir, fileName, startYear, yearNum=1):
 usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
 usecols = [0,6,16,17,24,31]
+usecols = [0, 2,11,24,26,29,30]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -177,14 +178,15 @@ def prepareData(df, dfi, dfmacro, dfmoney):
     # tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
     #                      turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:],
     #                      cpi_ppi, fai_inverse, m2_m1))
-    tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
-                         turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
+    # tempX = np.column_stack((opens[1:], highs[1:], lows[1:], volumes[1:], changes[1:], changePcts[1:], averages[1:],
+    #                      turns[1:], rs[1:], lastRs[1:], weekAgoRs[1:], amts[1:], lastAmts[1:]))
     # tempX = np.column_stack((opens[1:], averages[1:], volumes[1:], changes[1:], turns[1:],
     #                      rs[1:], amts[1:], cpi_ppi, fai_inverse, m2_m1))
     # tempX = np.column_stack((opens[1:], averages[1:], volumes[1:], changes[1:], turns[1:],
     #                      rs[1:], amts[1:]))
     # tempX = np.column_stack((averages[1:],
     #                      rs[1:], amts[1:], cpi_ppi, fai_inverse, m2_m1))
+    tempX = np.column_stack((changes[1:], changePcts[1:], volumes[1:], amts[1:], turns[1:]))
     X = np.hstack((tempX, techs))
     y = upOrDowns[2:]  # 涨跌数组向后移一位,表当前周数据预测下一周涨跌
     y.append(upOrDowns[-1])  # 涨跌数组最后一位按前一位数据补上
@@ -234,9 +236,9 @@ baseDir = '/Users/eugene/Downloads/data/'
 stockCodes = ['000300.SH', '000016.SH', '000905.SH']
 
 
-# i = 0
-# startYear = 2014
-# number = 2
+# i = 2
+# startYear = 2015
+# number = 1
 # df = readWSDFile(baseDir, stockCodes[i], startYear, number)
 # print 'Day count:', len(df)
 # # print df.head(5)
