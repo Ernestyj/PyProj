@@ -86,11 +86,10 @@ def annualizedReturnRatioSingle(portfolio, C=100000.0, T=250.0, D=250.0):
 baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
-instruments = ['000300.SH', '000016.SH', '000905.SH', '002047.SZ', '600015.SH', '600674.SH']
-instrument = instruments[5]
-initCapital = 10000 #100000000.0 # 一亿
-startYear = 2015; yearNum = 2
-# startYear = 2015; yearNum = 1
+instruments = ['000300.SH', '000016.SH', '000905.SH']
+instrument = instruments[2]
+initCapital = 100000000.0 # 一亿
+startYear = 2015; yearNum = 1
 # startYear = 2014; yearNum = 2
 
 df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
@@ -111,6 +110,8 @@ X_norm = normalizer.transform(X)
 # clf = svm.SVC(kernel='rbf', gamma=2048, C=2)
 clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
 
+from sklearn.ensemble import RandomForestClassifier
+clf_rf = RandomForestClassifier(n_estimators=200, random_state=47)
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)
 print pathName
@@ -137,7 +138,7 @@ class SVMStrategy(strategy.BacktestingStrategy):
         self.buys = []
         self.sells = []
 
-        self.clf = clf
+        self.clf = clf_rf
         self.X_norm = X_norm
         self.y = y
         self.actionDates = actionDates
@@ -292,4 +293,4 @@ def test(isOptimize=True, win=9):
         # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=True, win=8)
+test(isOptimize=False, win=8)

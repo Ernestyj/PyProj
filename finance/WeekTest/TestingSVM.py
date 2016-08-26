@@ -85,10 +85,11 @@ def annualizedReturnRatioSingle(portfolio, C=100000.0, T=250.0, D=250.0):
 baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
-instruments = ['000300.SH', '000016.SH', '000905.SH']
-instrument = instruments[2]
-initCapital = 100000000.0 # 一亿
-startYear = 2015; yearNum = 1
+instruments = ['000300.SH', '000016.SH', '000905.SH', '002047.SZ', '600015.SH', '600674.SH']
+instrument = instruments[5]
+initCapital = 10000 #100000000.0 # 一亿
+startYear = 2015; yearNum = 2
+# startYear = 2015; yearNum = 1
 # startYear = 2014; yearNum = 2
 
 df = readWSDFile(baseDir, instrument, startYear, yearNum)
@@ -294,4 +295,4 @@ def test(isOptimize=True, win=9):
     else: # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=False, win=8)
+test(isOptimize=True, win=8)

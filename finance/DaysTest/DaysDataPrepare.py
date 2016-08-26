@@ -43,6 +43,7 @@ usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
 usecols = [0,6,16,17,24,31]
 usecols = [0, 2,11,24,26,29,30]
+usecols = [0, 1,2,3,4,5,6]
 # usecols = [0, 5,7,11,19,24,26,28]
 # usecols = [0, 2,5,7,11,19,24,26,28,29,30]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
@@ -197,7 +198,7 @@ def plot3D(X_pca, y):
     plt.show()
 
 baseDir = '/Users/eugene/Downloads/data/'
-stockCodes = ['000300.SH', '000016.SH', '000905.SH']
+stockCodes = ['000300.SH', '000016.SH', '000905.SH', '002047.SZ', '600015.SH', '600674.SH']
 
 # i = 2
 # startYear = 2014

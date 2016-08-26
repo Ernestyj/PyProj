@@ -19,8 +19,7 @@ import itertools
 from sklearn import preprocessing, svm, cross_validation, metrics, pipeline, grid_search
 from scipy.stats import sem
 
-from MonthDataPrepare import readWSDFile, prepareData, optimizeSVM, readWSDIndexFile, readAndCombineMacroEconomyFile, readMoneySupplyFile
-
+from DaysDataPrepare import readWSDFile, readWSDIndexFile, prepareData, optimizeSVM
 
 def readAndReWriteCSV(baseDir, instrument, startYear, yearNum=1):
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
@@ -86,31 +85,31 @@ def annualizedReturnRatioSingle(portfolio, C=100000.0, T=250.0, D=250.0):
 baseDir = '/Users/eugene/Downloads/Data/'
 # baseDir = '/Users/eugene/Downloads/marketQuotationData/'
 # 沪深300 上证50 中证500
-instruments = ['000300.SH', '000016.SH', '000905.SH', '002047.SZ', '600015.SH', '600674.SH']
-instrument = instruments[5]
-initCapital = 10000 #100000000.0 # 一亿
-startYear = 2015; yearNum = 2
-# startYear = 2015; yearNum = 1
+instruments = ['000300.SH', '000016.SH', '000905.SH']
+instrument = instruments[2]
+initCapital = 100000000.0 # 一亿
+startYear = 2015; yearNum = 1
 # startYear = 2014; yearNum = 2
 
-df = readWSDFile(baseDir, instrument, startYear=startYear, yearNum=yearNum)
+df = readWSDFile(baseDir, instrument, startYear, yearNum)
 print 'Day count:', len(df)
+# print df.head(5)
 dfi = readWSDIndexFile(baseDir, instrument, startYear, yearNum)
-dfmacro = readAndCombineMacroEconomyFile(baseDir, startYear, yearNum=yearNum)
-dfmoney = readMoneySupplyFile(baseDir, 'money_supply.csv', startYear, yearNum=yearNum)
-X, y, actionDates = prepareData(df, dfi, dfmacro, dfmoney)
-print np.shape(X), np.shape(y)
 
+X, y, actionDates = prepareData(df, dfi, win=16)
+print np.shape(X), np.shape(actionDates), np.shape(y); print y
 normalizer = preprocessing.Normalizer().fit(X)  # fit does nothing
 X_norm = normalizer.transform(X)
 # gamma, C, score = optimizeSVM(X_norm, y, kFolds=10); print 'gamma=',gamma, 'C=',C, 'score=',score
-# clf = svm.SVC(kernel='rbf', gamma=2048, C=8)
-# clf = svm.SVC(kernel='rbf', gamma=512, C=512)
-# clf = svm.SVC(kernel='rbf', gamma=2048, C=32)
-# clf = svm.SVC(kernel='rbf', gamma=2048, C=32)
-# clf = svm.SVC(kernel='rbf', gamma=2048, C=2)
-clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
+clf = svm.SVC(kernel='rbf', gamma=512, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=2048, C=32768)
+# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
+# clf = svm.SVC(kernel='rbf', gamma=0.125, C=0.125)
 
+from sklearn.ensemble import RandomForestClassifier
+clf_rf = RandomForestClassifier(n_estimators=200, random_state=47)
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startYear=startYear, yearNum=yearNum)
 print pathName
@@ -137,14 +136,14 @@ class SVMStrategy(strategy.BacktestingStrategy):
         self.buys = []
         self.sells = []
 
-        self.clf = clf
+        self.clf = clf_rf
         self.X_norm = X_norm
         self.y = y
         self.actionDates = actionDates
         self.win = win
         # print 'week count:', len(y)
 
-        self.monthCount = 1
+        self.segmentCount = 1
         self.dayCount = 0
         self.errorCount = 0
         self.rightCount = 0
@@ -209,19 +208,19 @@ class SVMStrategy(strategy.BacktestingStrategy):
 
         self.dayCount += 1
         curDate = bars[self.__instrument].getDateTime().date()
-        if curDate!=self.actionDates[self.monthCount-1]: # 非每月最后一天
+        if curDate!=self.actionDates[self.segmentCount-1]: # 非区间最后一天
             return
-        else:   # 每月最后一天
-            if self.monthCount < self.win+1:
-                self.monthCount += 1
+        else:   # 区间最后一天
+            if self.segmentCount < self.win+1:
+                self.segmentCount += 1
                 return
             else:
-                X_train = self.X_norm[self.monthCount - self.win - 1:self.monthCount - 1]
-                y_train = self.y[self.monthCount - self.win - 1:self.monthCount - 1]
-                X_test = self.X_norm[self.monthCount - 1]
-                y_test = self.y[self.monthCount - 1]
+                X_train = self.X_norm[self.segmentCount - self.win - 1:self.segmentCount - 1]
+                y_train = self.y[self.segmentCount - self.win - 1:self.segmentCount - 1]
+                X_test = self.X_norm[self.segmentCount - 1]
+                y_test = self.y[self.segmentCount - 1]
                 self.clf.fit(X_train, y_train)
-                result = self.clf.predict([X_test])[0]  # 为0表示跌，为1表示涨
+                result = self.clf.predict([X_test])[0]  # 为-1表示跌，为1表示涨
                 if result!=y_test: self.errorCount += 1 # 分类错误
                 else: self.rightCount += 1 # 分类正确
                 # If a position was not opened, check if we should enter a long position.
@@ -235,12 +234,12 @@ class SVMStrategy(strategy.BacktestingStrategy):
                 elif not self.__position.exitActive() and result==-1:
                     self.__position.exitMarket()
 
-                self.monthCount += 1
+                self.segmentCount += 1
         pass
 
 
 def parameters_generator():
-    win = range(8, 23)
+    win = range(6, 23)
     return itertools.product(win)
 
 
@@ -284,12 +283,11 @@ def testWithBestParameters(win=10):
 
 
 def test(isOptimize=True, win=9):
-    if isOptimize:
-        # 寻找最佳参数
+    if isOptimize: # 寻找最佳参数
         results = local.run(SVMStrategy, feed, parameters_generator())
         print 'Parameters:', results.getParameters(), 'Result:', results.getResult()
-    else:
-        # 用最佳参数回测
+        print results.getParameters()[0]
+    else: # 用最佳参数回测
         testWithBestParameters(win=win)
 
-test(isOptimize=True, win=8)
+test(isOptimize=False, win=10)

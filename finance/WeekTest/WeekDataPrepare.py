@@ -43,6 +43,7 @@ usecols = [0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 36, 37]
 usecols = [0,6,16,17,24,31]
 usecols = [0, 2,11,24,26,29,30]
+usecols = [0, 1,2,3,4,5,6]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
     dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d').date()
