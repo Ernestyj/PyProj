@@ -128,10 +128,9 @@ fastPeriod = 2
 # 长周期
 slowPeriod = 20
 
-pathName, df = readAndReWriteCSV(
-    baseDir, instrument, startDay, endDay)
-feed = yahoofeed.Feed()
-feed.addBarsFromCSV(instrument, pathName)
+# pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
+# feed = yahoofeed.Feed()
+# feed.addBarsFromCSV(instrument, pathName)
 # dayMABacktest(feed, instrument, cash, tradePercentage, df, fastPeriod, slowPeriod)
 
 import sys
@@ -143,4 +142,7 @@ cash = float(sys.argv[5])
 tradePercentage = float(sys.argv[6])
 fastPeriod = int(sys.argv[7])
 slowPeriod = int(sys.argv[8])
+pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
+feed = yahoofeed.Feed()
+feed.addBarsFromCSV(instrument, pathName)
 dayMABacktest(feed, instrument, cash, tradePercentage, df, fastPeriod, slowPeriod)
