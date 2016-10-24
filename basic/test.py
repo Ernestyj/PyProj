@@ -4,4 +4,11 @@
 def printMsg():
     print 'Hello'
 
-printMsg()
+# printMsg()
+
+import nolds
+import numpy as np
+
+rwalk = np.cumsum(np.random.random(1000))
+h = nolds.hurst_rs(rwalk)
+print h
