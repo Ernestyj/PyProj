@@ -46,3 +46,4 @@ print HurstExponent.computeHurstExpecPeters(df['Close'])
 
 print HurstExponent.hurst(df['Close'])
 
+
