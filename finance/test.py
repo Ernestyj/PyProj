@@ -32,7 +32,7 @@ baseDir = 'E:\\Downloads\\Data\\'
 # 股票代码
 instrument = '000001.SH'
 # 开始时间
-startDay = '2010-01-01'
+startDay = '2013-01-01'
 # 结束时间
 endDay = '2015-06-06'
 
