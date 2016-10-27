@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 import os
+import datetime
 
 def readAndReWriteCSV(baseDir, instrument, startDay, endDay):
     dateparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d')
@@ -76,7 +77,12 @@ instrument = str(sys.argv[2])
 startDay = str(sys.argv[3])
 endDay = str(sys.argv[4])
 window = int(sys.argv[5])
-pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
-print [date.strftime('%Y-%m-%d') for date in df.index]  #日期
-print df['Close'].values.tolist()    #收盘价
-print computeMovingHurst(df['Close'], window).values.tolist()  #移动Hurst指数
+
+startDayWithWindow = pd.to_datetime(startDay, format='%Y-%m-%d')
+startDayWithWindow = startDayWithWindow + datetime.timedelta(days=-window+1) #指定日期+窗口数据
+pathName, df = readAndReWriteCSV(baseDir, instrument, startDayWithWindow.strftime('%Y-%m-%d'), endDay)
+startDay = pd.to_datetime(startDay, format='%Y-%m-%d')
+print [date.strftime('%Y-%m-%d') for date in df[startDay:].index]  #日期
+print df[startDay:]['Close'].values.tolist()    #收盘价
+hursts = computeMovingHurst(df['Close'], window).values.tolist()  #移动Hurst指数
+print hursts[-len(df[startDay:]):]
