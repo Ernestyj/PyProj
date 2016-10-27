@@ -79,7 +79,7 @@ endDay = str(sys.argv[4])
 window = int(sys.argv[5])
 
 startDayWithWindow = pd.to_datetime(startDay, format='%Y-%m-%d')
-startDayWithWindow = startDayWithWindow + datetime.timedelta(days=-window+1) #指定日期+窗口数据
+startDayWithWindow = startDayWithWindow + datetime.timedelta(days=-window*2) #指定日期+窗口*2的数据
 pathName, df = readAndReWriteCSV(baseDir, instrument, startDayWithWindow.strftime('%Y-%m-%d'), endDay)
 startDay = pd.to_datetime(startDay, format='%Y-%m-%d')
 print [date.strftime('%Y-%m-%d') for date in df[startDay:].index]  #日期
