@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import os
 import datetime
+import nolds
 
 def readAndReWriteCSV(baseDir, instrument, startDay, endDay):
     dateparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d')
@@ -55,7 +56,7 @@ def computeMovingHurst(dataSeries, window=233):
     hursts = np.zeros(dataLen)
     hursts[0:window] = np.NaN
     for i in range(dataLen-window):
-        hursts[window+i] = hurst(dataSeries[i:i+window])
+        hursts[window+i] = nolds.hurst_rs(dataSeries[i:i+window])
     return pd.Series(hursts, index=dataSeries.index)
 
 
@@ -84,5 +85,5 @@ pathName, df = readAndReWriteCSV(baseDir, instrument, startDayWithWindow.strftim
 startDay = pd.to_datetime(startDay, format='%Y-%m-%d')
 print [date.strftime('%Y-%m-%d') for date in df[startDay:].index]  #日期
 print df[startDay:]['Close'].values.tolist()    #收盘价
-hursts = computeMovingHurst(df['Adj Close'], window).values.tolist()  #移动Hurst指数
+hursts = computeMovingHurst(df['PctChange'], window).values.tolist()  #移动Hurst指数
 print hursts[-len(df[startDay:]):]
