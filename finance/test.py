@@ -14,8 +14,8 @@ def readAndReWriteCSV(baseDir, instrument, startDay, endDay):
     df = None
     for year in range(startYear, endYear + 1):
         tempDF = pd.read_csv(baseDir + instrument + '\\wsd_' + instrument + '_' + str(year) + '.csv',
-                             index_col=0, sep='\t', usecols=[0, 2, 3, 4, 5, 6, 14], header=None,
-                             skiprows=1, names=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close'],
+                             index_col=0, sep='\t', usecols=[0, 2, 3, 4, 5, 6, 10, 14], header=None,
+                             skiprows=1, names=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'PctChange', 'Adj Close'],
                              parse_dates=True, date_parser=dateparse)
         if df is None:
             df = tempDF
@@ -38,12 +38,12 @@ endDay = '2015-06-06'
 
 pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
 
-print nolds.hurst_rs(df['Close'])
+print nolds.hurst_rs(df['PctChange'])
 
 import HurstExponent
-print HurstExponent.computeHurst(df['Close'])
-print HurstExponent.computeHurstExpecPeters(df['Close'])
+# print HurstExponent.computeHurst(df['PctChange'])
+# print HurstExponent.computeHurstExpecPeters(df['PctChange'])
 
-print HurstExponent.hurst(df['Close'])
+print HurstExponent.hurst(df['Adj Close'])
 
 

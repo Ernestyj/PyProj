@@ -15,8 +15,8 @@ def readAndReWriteCSV(baseDir, instrument, startDay, endDay):
     df = None
     for year in range(startYear, endYear + 1):
         tempDF = pd.read_csv(baseDir + instrument + os.path.sep + 'wsd_' + instrument + '_' + str(year) + '.csv',
-                             index_col=0, sep='\t', usecols=[0, 2, 3, 4, 5, 6, 14], header=None,
-                             skiprows=1, names=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close'],
+                             index_col=0, sep='\t', usecols=[0, 2, 3, 4, 5, 6, 10, 14], header=None,
+                             skiprows=1, names=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'PctChange', 'Adj Close'],
                              parse_dates=True, date_parser=dateparse)
         if df is None:
             df = tempDF
@@ -84,5 +84,5 @@ pathName, df = readAndReWriteCSV(baseDir, instrument, startDayWithWindow.strftim
 startDay = pd.to_datetime(startDay, format='%Y-%m-%d')
 print [date.strftime('%Y-%m-%d') for date in df[startDay:].index]  #日期
 print df[startDay:]['Close'].values.tolist()    #收盘价
-hursts = computeMovingHurst(df['Close'], window).values.tolist()  #移动Hurst指数
+hursts = computeMovingHurst(df['Adj Close'], window).values.tolist()  #移动Hurst指数
 print hursts[-len(df[startDay:]):]
