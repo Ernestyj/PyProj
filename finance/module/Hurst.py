@@ -59,16 +59,18 @@ def computeMovingHurst(dataSeries, window=233):
         hursts[window+i] = nolds.hurst_rs(dataSeries[i:i+window])
     return pd.Series(hursts, index=dataSeries.index)
 
+# import time
+# start = time.time()
 
 # 路径
 baseDir = 'E:\\Downloads\\Data\\'
 # baseDir = '/Users/eugene/Downloads/data/'
 # 股票代码
-instrument = '000001.SH'
+instrument = '000300.SH'
 # 开始时间
-startDay = '2013-01-01'
+startDay = '2014-01-01'
 # 结束时间
-endDay = '2015-06-06'
+endDay = '2015-12-31'
 # Hurst计算窗口
 window = 233
 
@@ -87,3 +89,6 @@ print [date.strftime('%Y-%m-%d') for date in df[startDay:].index]  #日期
 print df[startDay:]['Close'].values.tolist()    #收盘价
 hursts = computeMovingHurst(df['PctChange'], window).values.tolist()  #移动Hurst指数
 print hursts[-len(df[startDay:]):]
+
+# end = time.time()
+# print 'time:',end-start

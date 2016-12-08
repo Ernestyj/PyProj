@@ -367,19 +367,31 @@ def day_svm_backtest(baseDir, instrument, initCapital=100000, startYear=2014, ye
 import sys   ##加载sys这个模块。
 # for i in range(len(sys.argv)): print "%d parameter: %s" % (i, sys.argv[i])
 
-baseDir = '/Users/eugene/Downloads/data/'
+import time
+start = time.time()
+
+baseDir = 'E:\\Downloads\\Data\\'
+# baseDir = '/Users/eugene/Downloads/data/'
 instruments = ['000300.SH', '000016.SH', '000905.SH', '002047.SZ', '600015.SH', '600674.SH']
 instrument = instruments[0]
+initCapital = 100000000
+startYear = 2014
+yearNum = 2
+winK = 15
+win = 10
 
 # day_svm_backtest(baseDir=baseDir, instrument=instrument, initCapital=100000000,
 #                  startYear=2014, yearNum=2, winK=15, win=10)
-baseDir = str(sys.argv[1])
-instrument = str(sys.argv[2])
-initCapital = int(sys.argv[3])
-startYear = int(sys.argv[4])
-yearNum = int(sys.argv[5])
-winK = int(sys.argv[6])
-win = int(sys.argv[7])
+# baseDir = str(sys.argv[1])
+# instrument = str(sys.argv[2])
+# initCapital = int(sys.argv[3])
+# startYear = int(sys.argv[4])
+# yearNum = int(sys.argv[5])
+# winK = int(sys.argv[6])
+# win = int(sys.argv[7])
 # print baseDir, instrument, initCapital, startYear, yearNum, winK, win
 day_svm_backtest(baseDir=baseDir, instrument=instrument, initCapital=initCapital,
                  startYear=startYear, yearNum=yearNum, winK=winK, win=win)
+
+end = time.time()
+print 'time:',end-start
