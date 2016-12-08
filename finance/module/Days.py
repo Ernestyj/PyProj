@@ -61,6 +61,7 @@ def readAndReWriteCSV(baseDir, instrument, startYear, yearNum=1):
     resultDF.to_csv(pathName)
     return pathName, resultDF
 
+usecols = [0, 2,11,24,26,29,30]
 usecols = [0, 1,2,3,4,5,6]
 def readWSDIndexFile(baseDir, stockCode, startYear, yearNum=1):
     # 解析日期
@@ -389,6 +390,7 @@ win = 10
 # yearNum = int(sys.argv[5])
 # winK = int(sys.argv[6])
 # win = int(sys.argv[7])
+
 # print baseDir, instrument, initCapital, startYear, yearNum, winK, win
 day_svm_backtest(baseDir=baseDir, instrument=instrument, initCapital=initCapital,
                  startYear=startYear, yearNum=yearNum, winK=winK, win=win)
