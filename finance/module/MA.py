@@ -109,12 +109,12 @@ def readAndReWriteCSV(baseDir, instrument, startDay, endDay):
     resultDF.to_csv(pathName)
     return pathName, resultDF
 
-import time
-start = time.time()
+# import time
+# start = time.time()
 
 # 路径
-baseDir = 'E:\\Downloads\\Data\\'
-# baseDir = '/Users/eugene/Downloads/data/'
+# baseDir = 'E:\\Downloads\\Data\\'
+baseDir = '/Users/eugene/Downloads/data/'
 # 股票代码
 instrument = '000300.SH'
 # 开始时间
@@ -130,24 +130,19 @@ fastPeriod = 2
 # 长周期
 slowPeriod = 20
 
-# pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
-# feed = yahoofeed.Feed()
-# feed.addBarsFromCSV(instrument, pathName)
-# dayMABacktest(feed, instrument, cash, tradePercentage, df, fastPeriod, slowPeriod)
-
 import sys
-# baseDir = str(sys.argv[1])
-# instrument = str(sys.argv[2])
-# startDay = str(sys.argv[3])
-# endDay = str(sys.argv[4])
-# cash = float(sys.argv[5])
-# tradePercentage = float(sys.argv[6])
-# fastPeriod = int(sys.argv[7])
-# slowPeriod = int(sys.argv[8])
+baseDir = str(sys.argv[1])
+instrument = str(sys.argv[2])
+startDay = str(sys.argv[3])
+endDay = str(sys.argv[4])
+cash = float(sys.argv[5])
+tradePercentage = float(sys.argv[6])
+fastPeriod = int(sys.argv[7])
+slowPeriod = int(sys.argv[8])
 pathName, df = readAndReWriteCSV(baseDir, instrument, startDay, endDay)
 feed = yahoofeed.Feed()
 feed.addBarsFromCSV(instrument, pathName)
 dayMABacktest(feed, instrument, cash, tradePercentage, df, fastPeriod, slowPeriod)
 
-end = time.time()
-print 'time:',end-start
+# end = time.time()
+# print 'time:',end-start
