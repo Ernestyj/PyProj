@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-def printMsg():
-    print 'Hello'
+print "******start******"
 
-# printMsg()
+def get_city_country(city, county):
+	return city.title() + ', ' + county.title()
 
-import nolds
-import numpy as np
+import unittest
 
-rwalk = np.cumsum(np.random.random(1000))
-h = nolds.hurst_rs(rwalk)
-print h
+class CityCountryTest(unittest.TestCase):
+	def test_get_city_country(self):
+		s = get_city_country('santiago', 'Chile')
+		self.assertEqual(s, 'Santiago, Chile')
+
+unittest.main()
