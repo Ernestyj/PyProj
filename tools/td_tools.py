@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# author: Raychee
 
 import teradata
 import pandas as pd

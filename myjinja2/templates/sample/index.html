@@ -1,0 +1,75 @@
+{% extends "template/base.html" %}
+
+<!-- HEAD**************************************** -->
+<!-- TITLE-->
+{% block title %}Index{% endblock %}
+
+<!-- EXTRAHEAD-->
+{% block extrahead %}
+<script>
+    $(document).ready(function(){
+        $('#btn_add_admin').click(function(){
+            window.location.href = "/admin/signup"
+        })
+        $('#btn_user_list').click(function(){
+            window.location.href = "/admin/user/list"
+        })
+        $('#btn_apartment_list').click(function(){
+            window.location.href = "/admin/apartment/list"
+        })
+        $('#btn_personnel_list').click(function(){
+            window.location.href = "/admin/personnel/list"
+        })
+    })
+</script>
+{% endblock %}
+
+<!-- BODY**************************************** -->
+<!-- NAVIGATION -->
+
+<!-- CONTENT -->
+<!--SIDE_BAR-->
+
+<!--CONTENT_CONTAINER-->
+{% block content_container %}
+<h1 class="page-header">Dashboard</h1>
+
+<div class="row placeholders">
+    <div class="col-xs-6 col-sm-3 placeholder">
+        <button class="btn btn-lg btn-primary btn-block" id="btn_add_admin">User Signup</button>
+    </div>
+    <div class="col-xs-6 col-sm-3 placeholder">
+        <button class="btn btn-lg btn-primary btn-block" id="btn_user_list">User List</button>
+    </div>
+</div>
+
+<div class="row placeholders">
+    <div class="col-xs-6 col-sm-3 placeholder">
+        <button class="btn btn-lg btn-primary btn-block" id="btn_personnel_list">Personnel List</button>
+    </div>
+</div>
+
+<div class="row placeholders">
+    <div class="col-xs-6 col-sm-3 placeholder">
+        <button class="btn btn-lg btn-primary btn-block" id="btn_apartment_list">Apartment List</button>
+    </div>
+</div>
+
+<h2 class="sub-header">Section title</h2>
+{% endblock content_container %}
+
+<!-- FOOTER -->
+
+<!-- EXTRA_STYLE -->
+{% block extra_style %}
+{{  super() }}
+<style>
+    .placeholders {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .placeholders h4 {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock extra_style %}

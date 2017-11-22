@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import ConfigParser
 import os
+import ConfigParser
 
 #获取config配置文件
 def getConfig(section, key):
