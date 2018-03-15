@@ -1,6 +1,8 @@
 #directory
 temp/
 .idea/
+tools/HL/
+tools/compare
 
 #pp directory
 MailAlert/

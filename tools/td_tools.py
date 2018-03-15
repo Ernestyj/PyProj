@@ -5,6 +5,8 @@ import teradata
 import pandas as pd
 
 class Teradata(object):
+    """Teradata connection tools use teradata and pandas (for python 2.7)
+    """
 
     pooling = True
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from tools.td_tools import Teradata
-from tools.read_json_conf import JsonConf
+from tools import JsonConf
 
 root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 conf = JsonConf().get_json_conf(path= root_path + '/conf.json')
