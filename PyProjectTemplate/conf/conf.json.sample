@@ -1,0 +1,17 @@
+{
+  "teradata": {
+    "username": "",
+    "password": "",
+    "JACKAL": "jackal.vip.paypal.com",
+    "SIMBA": "simba.vip.paypal.com"
+  },
+  "mysql": {
+    "username": "",
+    "password": "",
+    "host": "sjnitapp22.sjn.its.paypalcorp.com",
+    "defaultdb": "rule360"
+  },
+  "mail_alert": {
+    "is_prod": "false"
+  }
+}
