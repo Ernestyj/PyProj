@@ -3,6 +3,7 @@ temp/
 .idea/
 tools/HL/
 tools/compare
+tools/temp
 
 #pp directory
 MailAlert/

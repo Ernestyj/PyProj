@@ -6,7 +6,7 @@ import traceback
 import logging
 
 from mysql_query import ROOT_PATH
-from tools import JsonConf
+from tools.json_tools import JsonConf
 
 
 class TDJobTimeUsedQuery():
