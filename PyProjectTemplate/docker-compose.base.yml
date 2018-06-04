@@ -1,0 +1,49 @@
+version: "3"
+
+
+# This is the base docker compose config. The main purpose is to:
+# 1. List all of the services & dbs in the system
+# 2. Specify the docker image / build context for every service
+# 3. Make sure all the components are in the same virtual network "spider"
+# 4. Make sure all the components are under the same environment variables "SPIDER_*"
+# 5. Make sure all the components have the right dependencies on each other
+# 6. NO volume mounting
+# 7. NO port publishing for internal components
+# 8. NO "restart:always" kind of configs that handle fail-over
+
+
+services:
+
+# ****** common databases *******
+  alerts_queue_mongo: # for alerts queue, and action reaper inside db
+    image: mongo:3.4.0
+    networks:
+      spider:
+
+  history_elasticsearch: # for alerts history, and action tasks history
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    networks:
+      spider:
+
+  history_kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    networks:
+      spider:
+    depends_on:
+      - history_elasticsearch
+
+# ****** action reaper *******
+  action_reaper:
+    build:
+      context: action_reaper
+    networks:
+      spider:
+    environment:
+      - SPIDER_RUNTIME_STAGE=${SPIDER_RUNTIME_STAGE}
+      - SPIDER_RUNTIME_MODE=${SPIDER_RUNTIME_MODE}
+    depends_on:
+      - alerts_queue_mongo
+
+
+networks:
+  spider:

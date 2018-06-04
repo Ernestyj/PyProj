@@ -45,10 +45,8 @@ def build_response(session_attributes, speechlet_response):
 # --------------- Functions that control the skill's behavior ------------------
 
 def get_welcome_response():
-    """ If we wanted to initialize the session to have some attributes we could
-    add those here
+    """ If we wanted to initialize the session to have some attributes we could add those here
     """
-
     session_attributes = {}
     card_title = "Welcome"
     speech_output = "Hi, I am Devin. Welcome to today's daily stand up meeting!" + \
@@ -61,7 +59,7 @@ def get_welcome_response():
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
     reprompt_text = "Who will be the first one? "
-
+    # Setting this to true ends the session and exits the skill.
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -82,10 +80,8 @@ def create_current_person_attributes(current_person):
 
 
 def set_name_in_session(intent, session):
-    """ Sets the color in the session and prepares the speech to reply to the
-    user.
+    """ Sets the color in the session and prepares the speech to reply to the user.
     """
-
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
@@ -127,10 +123,10 @@ def all_done(intent, session):
     should_end_session = True
 
     speech_output = "Ok, all of you have done good yesterday. And will also be today."
-    reprompt_text = None
     # Setting reprompt_text to None signifies that we do not want to reprompt
     # the user. If the user does not respond or says something that is not
     # understood, the session will end.
+    reprompt_text = None
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
 
@@ -139,27 +135,20 @@ def all_done(intent, session):
 
 def on_session_started(session_started_request, session):
     """ Called when the session starts """
-
-    print("on_session_started requestId=" + session_started_request['requestId']
-          + ", sessionId=" + session['sessionId'])
+    print("on_session_started requestId=" + session_started_request['requestId'] + ", sessionId=" + session['sessionId'])
 
 
 def on_launch(launch_request, session):
-    """ Called when the user launches the skill without specifying what they
-    want
+    """ Called when the user launches the skill without specifying what they want
     """
-
-    print("on_launch requestId=" + launch_request['requestId'] +
-          ", sessionId=" + session['sessionId'])
+    print("on_launch requestId=" + launch_request['requestId'] + ", sessionId=" + session['sessionId'])
     # Dispatch to your skill's launch
     return get_welcome_response()
 
 
 def on_intent(intent_request, session):
     """ Called when the user specifies an intent for this skill """
-
-    print("on_intent requestId=" + intent_request['requestId'] +
-          ", sessionId=" + session['sessionId'])
+    print("on_intent requestId=" + intent_request['requestId'] + ", sessionId=" + session['sessionId'])
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
@@ -180,13 +169,11 @@ def on_intent(intent_request, session):
 
 
 def on_session_ended(session_ended_request, session):
-    """ Called when the user ends the session.
-
-    Is not called when the skill returns should_end_session=true
+    """ Called when the user ends the session. Is not called when the skill returns should_end_session=true
     """
-    print("on_session_ended requestId=" + session_ended_request['requestId'] +
-          ", sessionId=" + session['sessionId'])
+    print("on_session_ended requestId=" + session_ended_request['requestId'] + ", sessionId=" + session['sessionId'])
     # add cleanup logic here
+    pass
 
 
 # --------------- Main handler ------------------
@@ -195,8 +182,7 @@ def lambda_handler(event, context):
     """ Route the incoming request based on type (LaunchRequest, IntentRequest,
     etc.) The JSON body of the request is provided in the event parameter.
     """
-    print("event.session.application.applicationId=" +
-          event['session']['application']['applicationId'])
+    print("event.session.application.applicationId=" + event['session']['application']['applicationId'])
 
     """
     Uncomment this if statement and populate with your skill's application ID to
@@ -208,8 +194,7 @@ def lambda_handler(event, context):
     #     raise ValueError("Invalid Application ID")
 
     if event['session']['new']:
-        on_session_started({'requestId': event['request']['requestId']},
-                           event['session'])
+        on_session_started({'requestId': event['request']['requestId']}, event['session'])
 
     if event['request']['type'] == "LaunchRequest":
         return on_launch(event['request'], event['session'])

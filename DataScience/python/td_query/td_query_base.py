@@ -39,8 +39,11 @@ class TeradataQueryBase():
     def query_sample(self):
         return self.teradata.query(query_string='''select * from pp_oap_sing_jyang2_t.test;''')
 
-    def query(self):
-        pass
+    def query(self, query_string):
+        self.logger.info('Start  querying, query="{}"'.format(query_string))
+        df = self.teradata.query(query_string=query_string)
+        self.logger.info('Finish querying, query="{}"'.format(query_string))
+        return df
 
     # init helper##############################################################################
     def _init_logger(self):

@@ -1,16 +1,9 @@
-#directory
-temp/
+# custome ignore
 .idea/
+log/
 external/
-
-#files
-*.log
-*.png
-*.pickle
-
-#conf files
-conf.json
-
+.pytest_cache/
+jobs.sqlite
 
 
 # Byte-compiled / optimized / DLL files
@@ -23,10 +16,11 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+venv/
 env/
 build/
 develop-eggs/
-dist/
+#dist/
 downloads/
 eggs/
 .eggs/
@@ -66,14 +60,6 @@ coverage.xml
 
 # Django stuff:
 *.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
 
 # Sphinx documentation
 docs/_build/
@@ -81,24 +67,18 @@ docs/_build/
 # PyBuilder
 target/
 
-# IPython Notebook
+#Ipython Notebook
 .ipynb_checkpoints
+/.idea/
 
-# pyenv
-.python-version
+#temporary data used in elsa worker
+src/elsa_service/tmp_data*
 
-# celery beat schedule file
-celerybeat-schedule
+#job files in data service
+src/data_service/log_*
+src/data_service/fMap_*
+src/data_service/CSVHeader_*
+src/data_service/FeatureReport_*
 
-# dotenv
-.env
-
-# virtualenv
-venv/
-ENV/
-
-# Spyder project settings
-.spyderproject
-
-# Rope project settings
-.ropeproject
+# css/js files downloaded by bower
+*bower_components*

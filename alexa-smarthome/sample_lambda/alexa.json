@@ -1,0 +1,396 @@
+[
+  {
+	"version": "1.0",
+	"session": {
+		"new": false,
+		"sessionId": "amzn1.echo-api.session.f060443f-8998-4b78-ba09-6661c71e38b2",
+		"application": {
+			"applicationId": "amzn1.ask.skill.bbc72bca-3efa-40b8-9083-c6b1bef6705f"
+		},
+		"attributes": {
+			"guessNumber": "1",
+			"randomNumber": "3"
+		},
+		"user": {
+			"userId": "amzn1.ask.account.AFQCCL2ZTZC6YT2N4LY4PY6J6FDQLR63DOPDHSFYM2IFM3AUQWYXKGYPQGJNBTPCQ77CAFWGPR5UTWWFCM4SCFCZWUAD5WMA5LHWSCL72RKFQB5FDLNURMCGGVMXEWEAZCJZZKMMTNKFLZK456VNH3Q3SH7GDQGIKDK5X6KXUX7L4T2JOOWSED5TGVGS3IBNC2XVWEIDAFHXBJA"
+		}
+	},
+	"context": {
+		"AudioPlayer": {
+			"playerActivity": "IDLE"
+		},
+		"Display": {},
+		"System": {
+			"application": {
+				"applicationId": "amzn1.ask.skill.bbc72bca-3efa-40b8-9083-c6b1bef6705f"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.AFQCCL2ZTZC6YT2N4LY4PY6J6FDQLR63DOPDHSFYM2IFM3AUQWYXKGYPQGJNBTPCQ77CAFWGPR5UTWWFCM4SCFCZWUAD5WMA5LHWSCL72RKFQB5FDLNURMCGGVMXEWEAZCJZZKMMTNKFLZK456VNH3Q3SH7GDQGIKDK5X6KXUX7L4T2JOOWSED5TGVGS3IBNC2XVWEIDAFHXBJA"
+			},
+			"device": {
+				"deviceId": "amzn1.ask.device.AECBNQMUWCNFLTE66LKCE6LSEH44XI3A4SYS6I6FQN5NEZHTGWJVC6NXTFLVDSY5W7R4VFMHS6LLUZGJG5676XDNYXRYWXUNUKSWY4YWJU7O5QGOBQOST5S2NYKXCXTIPPRWOOELMCNLN3BELQFREPIVKVDQ",
+				"supportedInterfaces": {
+					"AudioPlayer": {},
+					"Display": {
+						"templateVersion": "1.0",
+						"markupVersion": "1.0"
+					}
+				}
+			},
+			"apiEndpoint": "https://api.amazonalexa.com",
+			"apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLmJiYzcyYmNhLTNlZmEtNDBiOC05MDgzLWM2YjFiZWY2NzA1ZiIsImV4cCI6MTUyNTUxOTA1NiwiaWF0IjoxNTI1NTE1NDU2LCJuYmYiOjE1MjU1MTU0NTYsInByaXZhdGVDbGFpbXMiOnsiY29uc2VudFRva2VuIjpudWxsLCJkZXZpY2VJZCI6ImFtem4xLmFzay5kZXZpY2UuQUVDQk5RTVVXQ05GTFRFNjZMS0NFNkxTRUg0NFhJM0E0U1lTNkk2RlFONU5FWkhUR1dKVkM2TlhURkxWRFNZNVc3UjRWRk1IUzZMTFVaR0pHNTY3NlhETllYUllXWFVOVUtTV1k0WVdKVTdPNVFHT0JRT1NUNVMyTllLWENYVElQUFJXT09FTE1DTkxOM0JFTFFGUkVQSVZLVkRRIiwidXNlcklkIjoiYW16bjEuYXNrLmFjY291bnQuQUZRQ0NMMlpUWkM2WVQyTjRMWTRQWTZKNkZEUUxSNjNET1BESFNGWU0ySUZNM0FVUVdZWEtHWVBRR0pOQlRQQ1E3N0NBRldHUFI1VVRXV0ZDTTRTQ0ZDWldVQUQ1V01BNUxIV1NDTDcyUktGUUI1RkRMTlVSTUNHR1ZNWEVXRUFaQ0paWktNTVROS0ZMWks0NTZWTkgzUTNTSDdHRFFHSUtESzVYNktYVVg3TDRUMkpPT1dTRUQ1VEdWR1MzSUJOQzJYVldFSURBRkhYQkpBIn19.HjpRkLPs3OJbF4qQEmhNBM9Eal1OVkLVux1aJ1CC0kCMMXZCFxes0TbI0xAQRCjSqql8y_ykjLFSvjZYoCcsGebwOKZMrAH0ysovOwpxB3p_fqyDgSksXpPMJztjOa6UjwZaypfyDs0A_HWR5Mm5axJo73ZdTibX6d0ETuXO5OT1kBIBdPmlr40OyNVlMgP3fL_Jcp2DWElZveUzYwM751_d-_fJ2RM2uL_fKH4MjY8k83pmBaTDJ4Dj_sh9zplkYDw-VW_-r13LJjHzjj8pwut1gyR0DXQZQx6NJSCux1w0XgZypmFXhd18yJN9Gw1K7t3lsJZwlb1vrHoGR9J6Rw"
+		}
+	},
+	"request": {
+		"type": "SessionEndedRequest",
+		"requestId": "amzn1.echo-api.request.8a4bea3e-c4bd-442b-a713-717f95188991",
+		"timestamp": "2018-05-05T10:17:36Z",
+		"locale": "en-US",
+		"reason": "USER_INITIATED"
+	}
+  },
+
+  {
+	"version": "1.0",
+	"session": {
+		"new": false,
+		"sessionId": "amzn1.echo-api.session.fd7adc28-f17b-403e-9d4b-0921595c52e3",
+		"application": {
+			"applicationId": "amzn1.ask.skill.bbc72bca-3efa-40b8-9083-c6b1bef6705f"
+		},
+		"attributes": {
+			"randomNumber": "1"
+		},
+		"user": {
+			"userId": "amzn1.ask.account.AFQCCL2ZTZC6YT2N4LY4PY6J6FDQLR63DOPDHSFYM2IFM3AUQWYXKGYPQGJNBTPCQ77CAFWGPR5UTWWFCM4SCFCZWUAD5WMA5LHWSCL72RKFQB5FDLNURMCGGVMXEWEAZCJZZKMMTNKFLZK456VNH3Q3SH7GDQGIKDK5X6KXUX7L4T2JOOWSED5TGVGS3IBNC2XVWEIDAFHXBJA"
+		}
+	},
+	"context": {
+		"AudioPlayer": {
+			"playerActivity": "IDLE"
+		},
+		"Display": {
+			"token": ""
+		},
+		"System": {
+			"application": {
+				"applicationId": "amzn1.ask.skill.bbc72bca-3efa-40b8-9083-c6b1bef6705f"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.AFQCCL2ZTZC6YT2N4LY4PY6J6FDQLR63DOPDHSFYM2IFM3AUQWYXKGYPQGJNBTPCQ77CAFWGPR5UTWWFCM4SCFCZWUAD5WMA5LHWSCL72RKFQB5FDLNURMCGGVMXEWEAZCJZZKMMTNKFLZK456VNH3Q3SH7GDQGIKDK5X6KXUX7L4T2JOOWSED5TGVGS3IBNC2XVWEIDAFHXBJA"
+			},
+			"device": {
+				"deviceId": "amzn1.ask.device.AECBNQMUWCNFLTE66LKCE6LSEH44XI3A4SYS6I6FQN5NEZHTGWJVC6NXTFLVDSY5W7R4VFMHS6LLUZGJG5676XDNYXRYWXUNUKSWY4YWJU7O5QGOBQOST5S2NYKXCXTIPPRWOOELMCNLN3BELQFREPIVKVDQ",
+				"supportedInterfaces": {
+					"AudioPlayer": {},
+					"Display": {
+						"templateVersion": "1.0",
+						"markupVersion": "1.0"
+					}
+				}
+			},
+			"apiEndpoint": "https://api.amazonalexa.com",
+			"apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLmJiYzcyYmNhLTNlZmEtNDBiOC05MDgzLWM2YjFiZWY2NzA1ZiIsImV4cCI6MTUyNTUxOTE1MSwiaWF0IjoxNTI1NTE1NTUxLCJuYmYiOjE1MjU1MTU1NTEsInByaXZhdGVDbGFpbXMiOnsiY29uc2VudFRva2VuIjpudWxsLCJkZXZpY2VJZCI6ImFtem4xLmFzay5kZXZpY2UuQUVDQk5RTVVXQ05GTFRFNjZMS0NFNkxTRUg0NFhJM0E0U1lTNkk2RlFONU5FWkhUR1dKVkM2TlhURkxWRFNZNVc3UjRWRk1IUzZMTFVaR0pHNTY3NlhETllYUllXWFVOVUtTV1k0WVdKVTdPNVFHT0JRT1NUNVMyTllLWENYVElQUFJXT09FTE1DTkxOM0JFTFFGUkVQSVZLVkRRIiwidXNlcklkIjoiYW16bjEuYXNrLmFjY291bnQuQUZRQ0NMMlpUWkM2WVQyTjRMWTRQWTZKNkZEUUxSNjNET1BESFNGWU0ySUZNM0FVUVdZWEtHWVBRR0pOQlRQQ1E3N0NBRldHUFI1VVRXV0ZDTTRTQ0ZDWldVQUQ1V01BNUxIV1NDTDcyUktGUUI1RkRMTlVSTUNHR1ZNWEVXRUFaQ0paWktNTVROS0ZMWks0NTZWTkgzUTNTSDdHRFFHSUtESzVYNktYVVg3TDRUMkpPT1dTRUQ1VEdWR1MzSUJOQzJYVldFSURBRkhYQkpBIn19.iHYGd6s6nEAY2YXN1c0Jinz-VCPHz2D7BlT3W2xDG3D1epooiygSv9H2FsjMyDixHZ6WXNOoJbvcfEJaPjpBLcMJx4hflyjXjJ74PzfY_zh6n8GR2WlQ5v7tDbnvrhCQ0HjyGKh3JebMzsUiekaPo-5imXxKh-c0SF-pF6sUgzP7h1SKssfRVJ6cSWK4f9uoPEKqWKvQgMlfHZ3FFNc_HwXysz88K00FvlfPFnh8PlwdAVj7-XsoKm-FfgnprfxgUJtvpNUByFfjQBVZtpcr_ZB6sIIPSK9ageRgLE3PjQ4j-qgdbgc8HzWb7r5Sj7MjpOBKlOWI8nrVEZL5IJ1qZw"
+		}
+	},
+	"request": {
+		"type": "IntentRequest",
+		"requestId": "amzn1.echo-api.request.99bd75c1-efed-43ad-8a6f-2d1b85e42aa3",
+		"timestamp": "2018-05-05T10:19:11Z",
+		"locale": "en-US",
+		"intent": {
+			"name": "GuessNumberIntent",
+			"confirmationStatus": "NONE",
+			"slots": {
+				"NumberSlot": {
+					"name": "NumberSlot",
+					"value": "1",
+					"confirmationStatus": "NONE"
+				}
+			}
+		}
+	}
+  },
+  {
+	"body": {
+		"version": "1.0",
+		"response": {
+			"outputSpeech": {
+				"type": "PlainText",
+				"text": "Congratulations! You got it, the number is 1"
+			},
+			"card": {
+				"type": "Simple",
+				"title": "SessionSpeechlet - GuessNumberIntent",
+				"content": "SessionSpeechlet - Congratulations! You got it, the number is 1"
+			},
+			"reprompt": {
+				"outputSpeech": {
+					"type": "PlainText",
+					"text": "You can restart the game by saying, restart the game."
+				}
+			},
+			"shouldEndSession": false
+		},
+		"sessionAttributes": {
+			"guessNumber": "1",
+			"randomNumber": "1"
+		}
+	}
+},
+
+  {
+    "directive": {
+        "header": {
+            "namespace": "Alexa.Discovery",
+            "name": "Discover",
+            "payloadVersion": "3",
+            "messageId": "1bd5d003-31b9-476f-ad03-71d471922820"
+        },
+        "payload": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "access-token-from-skill"
+            }
+        }
+    }
+  },
+  {
+    "event": {
+      "header": {
+        "payloadVersion": "3",
+        "namespace": "Alexa.Discovery",
+        "name": "Discover.Response",
+        "messageId": "22862837-c73a-4c9e-b4d9-e877f64e9976"
+      },
+      "payload": {
+        "endpoints": [
+          {
+            "endpointId": "endpoint-001",
+            "capabilities": [
+              {
+                "interface": "Alexa.PowerController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "powerState"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.EndpointHealth",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "connectivity"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa",
+                "version": "3",
+                "type": "AlexaInterface"
+              }
+            ],
+            "cookie": {
+              "detail2": "that has some values in the additionalApplianceDetails",
+              "detail1": "For simplicity, this is the only appliance"
+            },
+            "manufacturerName": "Sample Manufacturer",
+            "friendlyName": "Switch",
+            "displayCategories": [
+              "SWITCH"
+            ],
+            "description": "001 Switch that can only be turned on/off"
+          },
+          {
+            "endpointId": "endpoint-002",
+            "capabilities": [
+              {
+                "interface": "Alexa.PowerController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "powerState"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.ColorController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "color"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.ColorTemperatureController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "colorTemperatureInKelvin"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.BrightnessController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "brightness"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.PowerLevelController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "powerLevel"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.PercentageController",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "percentage"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa.EndpointHealth",
+                "version": "3",
+                "type": "AlexaInterface",
+                "properties": {
+                  "retrievable": true,
+                  "supported": [
+                    {
+                      "name": "connectivity"
+                    }
+                  ],
+                  "proactivelyReported": true
+                }
+              },
+              {
+                "interface": "Alexa",
+                "version": "3",
+                "type": "AlexaInterface"
+              }
+            ],
+            "cookie": {},
+            "manufacturerName": "Sample Manufacturer",
+            "friendlyName": "Light",
+            "displayCategories": [
+              "LIGHT"
+            ],
+            "description": "002 Light that is dimmable and can change color and color temperature"
+          }
+        ]
+      }
+    }
+  },
+
+
+  {
+    "directive": {
+      "endpoint": {
+        "cookie": {
+          "detail1": "For simplicity, this is the only appliance",
+          "detail2": "that has some values in the additionalApplianceDetails"
+        },
+        "endpointId": "endpoint-001",
+        "scope": {
+          "token": "Atza|IwEBIBA4n5X4UkfTOXjujUcjg-xp6P9kZVqr7bDQAd10gup4aFZtAOm0bBU0HJfoeRP14ZTrg3E55gPufo1J4BbuM1TLtM6_QnyMnqxauJ8PnCZswsLj7kbdC4lujdWiVQOyWF-mV5E5TINfgGCnyzq0T2iGh-13pziLmAJDqdfB-fket3JVEVPk8LTWPSOQ-MZY88SiwGaJEa3ridU65RZSDSJ3YMZDw7z1kpT2tvqSSuwW_B-nahPl2wHUjkuirbzWmlGnKPW9llrs9f2S7r4QVtdAYwnK-VHZNncTokUnUROiRUjcImKzjIflvgGxZhLuD2jH_iCS28tkqBctFjStK4Iwjf7K4jzee6URCn1CBOVuCD2Xdt7kxQ-_vhc3HIqoScIxNCvCyZipMMsrAR26BVMz5KaZSc5CfA-_AYFxjePZWO4NgdKKYMTf4-KJgXEF1sogqSgrWyRIlHr7vF5tmy1JfJPtQvGlM51y_jduRG78-hvR4NqxooE4hBwZFf-ahqc",
+          "type": "BearerToken"
+        }
+      },
+      "header": {
+        "correlationToken": "AAAAAAAAAACGGSuH8EOULoVZvVSgrC86BAIAAAAAAABllDZGqCu8RyDsg+xM2kiNSPWCpmpuadmWFM+hOke9i1iSTXcwhYlJG97A3zmNoHIO6uzXY31ABHriTgXc95PZ+VVkvr5GpGfBKqXLkfYj8gzZ5HUKCm3xw9oCQQXiHK6mm5hKBpAGgvWes7nWOVioegtFROPoRfT9gdXTP4Sk6RNZiSTq7Ff2m18jh/+no73Q3epQFeNHRCy4q/pMd80DQ1H0jVi2jsOxLzKfuYg8xckJAzCWVyIhCDMc0PUO20eOS1MltlVZvNygU/2u9WfQtqJ/oXoF4VRxeRCpYVr3z2o08K6AoXZNndMQAp4t+oBWZlKqZ/RF5GOYE9jptsPDyFskFO2TOC3iQM0Bp75gv7QpqixRbhH2RBsZq6lQWCo5K9AkdCvvFU2QEi1lTad2Hvn92ygMHOp0ifsN2b4ArO4duk2DAjUlrIifRvajWeqgVdV/KXH5FpjGFcrdQGEH30QociIIK2oX8M1nokk3gtg63HHf3sQnGC5KjxsXJU9mSkXMr39XyFoBZoDDEw69uWo71hJqG3PDUGzXiZNH7+3RokmAABaRZ5l+Pd6QufjunBXUTfdVPXOTnrybDH+z5fVZz3KiRn/oS2PZ7/lHualr/l5LcJvggasfwNTIq/5OI8bxDFu3rP4oOuBJCnEOZc7VwSm3SPpWM5tFFi69/2uDCvU=",
+        "messageId": "9be394ef-0d12-415a-964a-4b916a5678f1",
+        "name": "TurnOn",
+        "namespace": "Alexa.PowerController",
+        "payloadVersion": "3"
+      },
+      "payload":
+      {}
+
+    }
+  },
+  {
+    "context": {
+        "properties": [
+            {
+                "name": "powerState",
+                "namespace": "Alexa.PowerController",
+                "timeOfSample": "2018-05-05T10:54:26.00Z",
+                "uncertaintyInMilliseconds": 500,
+                "value": "ON"
+            }
+        ]
+    },
+    "event": {
+        "endpoint": {
+            "endpointId": "endpoint-001",
+            "scope": {
+                "token": "access-token-from-Amazon",
+                "type": "BearerToken"
+            }
+        },
+        "header": {
+            "correlationToken": "AAAAAAAAAACGGSuH8EOULoVZvVSgrC86BAIAAAAAAABllDZGqCu8RyDsg+xM2kiNSPWCpmpuadmWFM+hOke9i1iSTXcwhYlJG97A3zmNoHIO6uzXY31ABHriTgXc95PZ+VVkvr5GpGfBKqXLkfYj8gzZ5HUKCm3xw9oCQQXiHK6mm5hKBpAGgvWes7nWOVioegtFROPoRfT9gdXTP4Sk6RNZiSTq7Ff2m18jh/+no73Q3epQFeNHRCy4q/pMd80DQ1H0jVi2jsOxLzKfuYg8xckJAzCWVyIhCDMc0PUO20eOS1MltlVZvNygU/2u9WfQtqJ/oXoF4VRxeRCpYVr3z2o08K6AoXZNndMQAp4t+oBWZlKqZ/RF5GOYE9jptsPDyFskFO2TOC3iQM0Bp75gv7QpqixRbhH2RBsZq6lQWCo5K9AkdCvvFU2QEi1lTad2Hvn92ygMHOp0ifsN2b4ArO4duk2DAjUlrIifRvajWeqgVdV/KXH5FpjGFcrdQGEH30QociIIK2oX8M1nokk3gtg63HHf3sQnGC5KjxsXJU9mSkXMr39XyFoBZoDDEw69uWo71hJqG3PDUGzXiZNH7+3RokmAABaRZ5l+Pd6QufjunBXUTfdVPXOTnrybDH+z5fVZz3KiRn/oS2PZ7/lHualr/l5LcJvggasfwNTIq/5OI8bxDFu3rP4oOuBJCnEOZc7VwSm3SPpWM5tFFi69/2uDCvU=",
+            "messageId": "df9f4947-d580-41da-a50c-893b724199d9",
+            "name": "Response",
+            "namespace": "Alexa",
+            "payloadVersion": "3"
+        },
+        "payload": {}
+    }
+  }
+
+
+
+
+]

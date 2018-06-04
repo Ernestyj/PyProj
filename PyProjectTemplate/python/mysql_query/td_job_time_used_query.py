@@ -45,7 +45,7 @@ class TDJobTimeUsedQuery():
         try:
             self.conf = JsonConf().get_json_conf(path=self.conf_path)
             self.conf_mysql = self.conf['mysql']
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
             self.logger.error(e.message)
 

@@ -5,6 +5,9 @@ from tools.test.test_json_tools import TestJsonTools
 from tools.test.test_td_tools import TestTdTools
 from td_query.test.test_example import TestExample
 from td_query.test.test_data_manipulate import TestDataManipulate
+from td_query.test.test_data_manipulate_apac import TestDataManipulateAPAC
+from td_query.test.test_data_manipulate_latam import TestDataManipulateLATAM
+
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
@@ -19,6 +22,8 @@ if __name__ == '__main__':
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestTdTools))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExample))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulate))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulateAPAC))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulateLATAM))
 
     ### 用addTests方法添加多个TestCase
     # suite.addTests(tests=[TestJsonTools("test_get_json_conf")])

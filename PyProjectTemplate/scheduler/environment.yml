@@ -1,0 +1,22 @@
+dependencies:  # the packages that can be installed by conda (preferred over pip because of better compatibility)
+- pytest=3
+
+- requests=2.13.0
+
+- python-dateutil # parse date
+
+- pandas=0.20.2
+
+- pip:  # the packages that can only be installed by pip
+
+  - pytz # timezone
+
+  #- cachetools==2.0.1
+
+  #- aiohttp==3.1.1
+
+  - apscheduler==3.5.1  # task scheduler
+
+  - pymongo==3.6.1 # mongo db
+
+  - SQLAlchemy==1.2.5

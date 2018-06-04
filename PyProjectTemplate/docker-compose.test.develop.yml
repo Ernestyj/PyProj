@@ -1,0 +1,25 @@
+version: "3"
+
+# The develop stage docker compose file is for beta release version of the project:
+# 1. Add "restart:always" kind of configs that handle fail-over
+# 2. Customize the command arguments for beta deployment
+# 3. Mount the volumes of the dbs to the destination for beta enviornment
+# 4. Publish the ports of all the internal components for quick debugging / testing
+# 5. DO NOT mount the source code directory into the service's container
+
+
+services:
+  config_gateway_service:
+    restart: always
+    ports:
+      - 8000:8000
+
+  policy_gateway_service:
+    restart: always
+    ports:
+      - 8001:8000
+
+  action_gateway_service:
+    restart: always
+    ports:
+      - 8002:8000

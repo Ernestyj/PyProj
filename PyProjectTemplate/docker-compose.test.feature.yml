@@ -1,0 +1,23 @@
+version: "3"
+
+
+# The feature stage docker compose file is for local trial runs:
+# 1. Further customization of build process (e.g. use an alternative Dockerfile for the feature-development-specific enviornment)
+# 2. Publish the ports of all the internal components for quick debugging / testing
+# 3. Mount the volumes of the dbs to the destination ONLY for feature development
+# 4. Mount the source code directory into the service's container in case of quick code changes
+# 5. Customize the command of each service for feature development
+
+
+services:
+  config_gateway_service:
+    ports:
+      - 8000:8000
+
+  policy_gateway_service:
+    ports:
+      - 8001:8000
+
+  action_gateway_service:
+    ports:
+      - 8002:8000
