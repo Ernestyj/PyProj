@@ -1,0 +1,17 @@
+{
+  "teradata": {
+    "username": "",
+    "password": "",
+    "JACKAL": "",
+    "SIMBA": ""
+  },
+  "mysql": {
+    "username": "",
+    "password": "",
+    "host": "",
+    "defaultdb": ""
+  },
+  "mail_alert": {
+    "is_prod": "false"
+  }
+}
