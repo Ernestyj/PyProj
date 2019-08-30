@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from reaper.settings import *
+from tools.settings import *
 
 
 class TestExample(unittest.TestCase):

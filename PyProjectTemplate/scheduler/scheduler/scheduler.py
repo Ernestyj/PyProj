@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
-import traceback
-from pymongo import MongoClient
-from apscheduler.schedulers.background import BlockingScheduler
-from apscheduler.jobstores.mongodb import MongoDBJobStore
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.events import EVENT_JOB_ERROR, EVENT_ALL_JOBS_REMOVED, EVENT_JOB_EXECUTED
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
-from apscheduler.events import EVENT_JOB_ERROR, EVENT_ALL_JOBS_REMOVED, EVENT_JOB_EXECUTED, EVENT_ALL
-from requests.exceptions import RequestException
-from pymongo.errors import PyMongoError
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.schedulers.background import BlockingScheduler
 
-from reaper.settings import *
-from reaper.utility import *
-from reaper.utility import get_cur_time
-
+from scheduler.utility import get_cur_time
+from tools.settings import *
 
 # apscheduler settings
 APSCHEDULER_SETTINGS = {

@@ -1,0 +1,21 @@
+pytest==3
+requests==2.13.0
+python-dateutil # parse date
+pandas==0.20.2
+pytz # timezone
+jinja2==2.10  # template engine
+premailer==3.1.1 # make html css inline for better email
+cachetools==2.0.1
+#aiohttp==3.1.1
+apscheduler==3.5.1  # task scheduler
+apscheduler==2.1.2  # task scheduler
+pymongo==3.6.1 # mongo db
+SQLAlchemy==1.2.5
+#pyodbc==4.0.16
+teradata==15.10.0.21
+pypyodbc==1.3.4.3 # pip only  only pypyodbc (1.3.3)
+mysqlclient==1.3.7
+
+matplotlib==2.0.2
+
+minepy==1.2.2

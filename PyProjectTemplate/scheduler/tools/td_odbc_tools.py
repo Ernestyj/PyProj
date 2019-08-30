@@ -3,11 +3,12 @@ try:
 except ImportError:
     import pyodbc
 
+pyodbc.lowercase = False
 import pandas as pd
 
 
 class Teradata(object):
-    """Teradata connection tools use odbc and pandas (for python 2.7)
+    """Teradata connection tools use odbc and pandas (for python 3)
     """
 
     _conn_pool = {}

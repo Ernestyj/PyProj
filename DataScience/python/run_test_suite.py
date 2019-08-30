@@ -7,6 +7,7 @@ from td_query.test.test_example import TestExample
 from td_query.test.test_data_manipulate import TestDataManipulate
 from td_query.test.test_data_manipulate_apac import TestDataManipulateAPAC
 from td_query.test.test_data_manipulate_latam import TestDataManipulateLATAM
+from td_query.test.test_data_manipulate_cc import TestDataManipulateCC
 
 
 if __name__ == '__main__':
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulate))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulateAPAC))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulateLATAM))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDataManipulateCC))
 
     ### 用addTests方法添加多个TestCase
     # suite.addTests(tests=[TestJsonTools("test_get_json_conf")])

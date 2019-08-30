@@ -50,8 +50,8 @@ else
 fi
 
 
-export SPIDER_RUNTIME_STAGE=${STAGE}
-export SPIDER_RUNTIME_MODE="test"
+export PROJECT_RUNTIME_STAGE=${STAGE}
+export PROJECT_RUNTIME_MODE="test"
 
 
 if [ -z ${SERVICES} ]; then

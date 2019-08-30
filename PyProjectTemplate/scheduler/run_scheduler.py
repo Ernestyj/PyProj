@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from reaper.reaper_scheduler import ActionScheduler
+from scheduler.scheduler import ActionScheduler
 
 
 # PROJECT_RUNTIME_STAGE = os.environ['PROJECT_RUNTIME_STAGE']

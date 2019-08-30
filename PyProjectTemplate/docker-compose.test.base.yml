@@ -38,8 +38,8 @@ services:
     networks:
       spider:
     environment:
-      - SPIDER_RUNTIME_STAGE=${SPIDER_RUNTIME_STAGE}
-      - SPIDER_RUNTIME_MODE=${SPIDER_RUNTIME_MODE}
+      - PROJECT_RUNTIME_STAGE=${PROJECT_RUNTIME_STAGE}
+      - PROJECT_RUNTIME_MODE=${PROJECT_RUNTIME_MODE}
     depends_on:
       - alerts_queue_mongo
 
