@@ -101,7 +101,7 @@ class TestExample(unittest.TestCase):
     #     print(solution([1,2,8,15], [3,6,10,18]))
     #     print(solution([1, 12, 42, 70, 36, -4, 43, 15], [5, 15, 44, 72, 36, 2, 69, 24]))
 
-    def test_A(self):
+    def _A(self):
         S = \
 """
   root r-x delete-this.xls \t\t
